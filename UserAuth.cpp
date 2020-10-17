@@ -5,6 +5,8 @@
 
 #include "Display.h"
 #include "UserAuth.h"
+#include "Student.h"
+#include "Startup.h"
 
 using namespace std;
 
@@ -33,6 +35,9 @@ bool UserAuthentication::login(istream &in) {
 
 //Check for Valid Username and Password
 bool UserAuthentication::success(string& username, string& password) {
-	return true;
+	for (Student s : Startup::getStudents())
+		if (s.getUsername() == username && s.getPassword() == password)
+			return true;
+	return false;
 }
 

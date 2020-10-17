@@ -3,12 +3,9 @@
 #include <iostream>
 #include <istream>
 #include <string>
-
 using namespace std;
 
 class UserAuthentication {
-private:
-	string user, pw;
 public:
 	static bool signup(istream& in);
 	static bool login(istream& in);

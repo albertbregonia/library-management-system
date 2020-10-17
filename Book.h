@@ -1,6 +1,11 @@
 //Instantiation of Book Object
 
+#pragma once
+#include <string>
+using namespace std;
+
 class Book {
+
 private:
 	long ISBN;
 	string title;
@@ -10,10 +15,13 @@ private:
 	string reader; //Borrower
 	long start; //start date
 	long end; //expiration date
-public:
-	//Accessors
-	void output();
 
+public:
+	//Constructors
+	Book();
+	Book(long ISBN, string title, string author, string category, int id, string reader, long start, long end);
+
+	//Accessors
 	long getISBN();
 	string getTitle();
 	string getAuthor();
@@ -23,25 +31,16 @@ public:
 	long getStartDate();
 	long getExpirationDate();
 
-	void SetIsbn(long ISBN);
-	void SetTitle(string title);
-	void SetAuthor(string author);
-	void SetCategory(string category);
-	void Setid(int id);
-	void SetBorrower(string reader);
-	void SetStartDate(long start);
-	void SetExpirationDate(long end);
-};
+	//Mutators
+	void setISBN(long ISBN);
+	void setTitle(string title);
+	void setAuthor(string author);
+	void setCategory(string category);
+	void setID(int id);
+	void setBorrower(string reader);
+	void setStartDate(long start);
+	void setExpirationDate(long end);
 
-/* ====Book Database Format==== 
-isbn
-title
-author
-category
-id
-borrowerName
-start
-end
--------------
-...
-*/
+	//Display
+	void print();
+};

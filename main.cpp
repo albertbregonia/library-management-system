@@ -11,17 +11,21 @@
 	*/
 
 #include <iostream>
+#include <vector>
+#include <fstream>
+
 #include "Display.h"
 #include "UserAuth.h"
+#include "Startup.h"
 
 using namespace std;
 
-bool startup();
-void gui();
+void startup();
 void start();
+void gui(char type);
 
-int main() 
-{
+int main() {
+	startup();
 	start();
 	return 0;
 }
@@ -39,10 +43,12 @@ void start() {
 	cout << "You have successfully logged out of the Library Management System. Have a great day." << endl;
 }
 
-//Loads into the RAM all of the library data
-bool startup() {
-	return true;
+void startup() {
+	if (!Startup::loadBooks() || !Startup::loadStudents())
+		exit(-1);
 }
+
+
 
 void gui(char type) {
 	cout << endl;
@@ -72,6 +78,8 @@ void gui(char type) {
 		}
 		Display::menu(type);
 		cin >> choice;
+		cout << endl << endl;
+		Display::border();
 	}
 	cout << "You have successfully logged out of the Library Management System. Have a great day." << endl;
 	for (int i = 0; i < 50; i++)
