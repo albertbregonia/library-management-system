@@ -1,4 +1,4 @@
-// Xiangfeng Lin for the cpp file
+// Xiangfeng Lin for the cpp file 10/16
 
 #include <iostream>
 #include <iomanip>
@@ -11,14 +11,14 @@ Book::Book() {}
 
 void Book::output()  //show the information of the book
 {
-	cout << "              ISBN:" << ISBN << endl;
-	cout << "              title:" << title << endl;
-	cout << "              author:" << author << endl;
-	cout << "              category:" << category << endl;
-	cout << "			   ID:"<< id << endl;
-	cout << "			   Reader:" << reader << endl;
-	cout << "              Start date:" << start << endl;
-	cout << "              Expiration date:" << end << endl;
+	cout << "\tISBN:" << ISBN << endl;
+	cout << "\ttitle:" << title << endl;
+	cout << "\tauthor:" << author << endl;
+	cout << "\tcategory:" << category << endl;
+	cout << "\tID:"<< id << endl;
+	cout << "\tReader:" << reader << endl;
+	cout << "\tStart date:" << start << endl;
+	cout << "\tExpiration date:" << end << endl;
 }
 
 long Book::ISBN()
