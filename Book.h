@@ -12,6 +12,8 @@ private:
 	long end; //expiration date
 public:
 	//Accessors
+	void output();
+
 	long getISBN();
 	string getTitle();
 	string getAuthor();
@@ -20,6 +22,15 @@ public:
 	string getBorrower();
 	long getStartDate();
 	long getExpirationDate();
+
+	void SetIsbn(long ISBN);
+	void SetTitle(string title);
+	void SetAuthor(string author);
+	void SetCategory(string category);
+	void Setid(int id);
+	void SetBorrower(string reader);
+	void SetStartDate(long start);
+	void SetExpirationDate(long end);
 };
 
 /* ====Book Database Format==== 
