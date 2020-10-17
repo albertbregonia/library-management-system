@@ -19,7 +19,7 @@ void Display::welcome() {
 void Display::border() {cout << "=============================================" << endl << endl;}
 
 //Displays options menu for users that are logged in
-void Display::menu(char type) {
+void Display::menu(bool teacher) {
 	cout << endl;
 	border();
 	//As of 10/16, type is supposed to be 's' for student and 't' for teacher to change options
@@ -32,4 +32,9 @@ void Display::menu(char type) {
 		else
 			cout << "\t" << "0 -- " << options[i] << endl;
 	}
+}
+
+void Display::clrscr() {
+	for (int i = 0; i < 50; i++)
+		cout << endl; //clear the screen
 }

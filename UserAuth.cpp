@@ -28,8 +28,6 @@ bool UserAuthentication::login(istream &in) {
 	in >> user;
 	cout << "Please enter your password: ";
 	in >> pw;
-	if (!success(user, pw)) //checks and assigns the value of 'login' to 'valid' to check for valid login
-		cerr << "Invalid Username and/or Password. Please try again." << endl << endl;
 	return success(user, pw);
 }
 

@@ -104,3 +104,8 @@ bool Startup::loadStudents() {
 			}
 	return studentData.is_open();
 }
+
+//Destructor to save current data into the databases 'book.txt' and 'student.txt'
+Startup::~Startup() {
+
+}

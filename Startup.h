@@ -16,4 +16,5 @@ public:
 	static Book* getBookByID(int id);
 	static bool loadBooks();
 	static bool loadStudents();
+	~Startup();
 };
