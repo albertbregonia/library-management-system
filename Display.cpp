@@ -19,10 +19,11 @@ void Display::welcome() {
 void Display::border() {cout << "=============================================" << endl << endl;}
 
 //Displays options menu for users that are logged in
-void Display::menu() {
+void Display::menu(char type) {
 	cout << endl;
 	border();
-	string options[] = {"Search for Books", "Borrow Books", "Return Books", "Reserve Books", "Cancel Reservations", "About Me", "Change Password", "Log Out"};
+	//As of 10/16, type is supposed to be 's' for student and 't' for teacher to change options
+	string options[] = { "Search for Books", "Borrow Books", "Return Books", "Reserve Books", "Cancel Reservations", "About Me", "Change Password", "Log Out" };
 	for (int i = 0; i < sizeof(options) / sizeof(string); i++) {
 		if (i == 0)
 			cout << "What would you like to do?" << endl;

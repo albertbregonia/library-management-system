@@ -4,7 +4,7 @@
 #include <istream>
 
 #include "Display.h"
-#include "UserAuthentication.h"
+#include "UserAuth.h"
 
 using namespace std;
 
@@ -35,3 +35,4 @@ bool UserAuthentication::login(istream &in) {
 bool UserAuthentication::success(string& username, string& password) {
 	return true;
 }
+

@@ -12,7 +12,7 @@
 
 #include <iostream>
 #include "Display.h"
-#include "UserAuthentication.h"
+#include "UserAuth.h"
 
 using namespace std;
 
@@ -34,7 +34,7 @@ void start() {
 		UserAuthentication::signup(cin);
 	else {
 		while (!UserAuthentication::login(cin)) {} //Attempt Login, Repeats until login is successful
-		gui();
+		gui('s');
 	}
 	cout << "You have successfully logged out of the Library Management System. Have a great day." << endl;
 }
@@ -44,12 +44,12 @@ bool startup() {
 	return true;
 }
 
-void gui() {
+void gui(char type) {
 	cout << endl;
 	Display::border();
 	cout << "You have successfully logged into the Library Management System." << endl;
 	int choice = 0;
-	Display::menu();
+	Display::menu(type);
 	cin >> choice;
 	while (choice > 0) {
 		switch (choice) {
@@ -70,7 +70,7 @@ void gui() {
 		default:
 			cout << "Invalid selection. Please enter a valid ID." << endl;
 		}
-		Display::menu();
+		Display::menu(type);
 		cin >> choice;
 	}
 	cout << "You have successfully logged out of the Library Management System. Have a great day." << endl;
