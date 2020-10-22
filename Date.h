@@ -1,16 +1,9 @@
 #pragma once
-
-#include <string>
-#include <vector>
 #include <ctime>
-#include <iostream>
-#include <ctime>
-#include <time.h>
-using namespace std;
 
-class Date
-{
+class Date {
+private:
+	const static int dayUnit = 60; // 1 minute = 1 day
 public:
-	Date();
-	void count_clock();
+	static int getDays();
 };

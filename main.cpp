@@ -3,7 +3,7 @@
 //Main System Launcher for the LMS
 
 	/*To Do:
-	* Date Counter
+	* Date Counter - currently simple implementation
 	* Borrow/Return Implementation
 	* Register - I'm not sure if we're allowed to do this?
 	*/
