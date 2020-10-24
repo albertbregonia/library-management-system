@@ -3,11 +3,11 @@
 #include <iostream>
 #include <istream>
 #include <string>
+#include "Student.h"
 using namespace std;
 
 class UserAuthentication {
 public:
 	static bool signup(istream& in);
-	static bool login(istream& in);
-	static bool success(string& username, string& password); //pass by reference for memory efficiency
+	static bool login(istream& in, Student& s);
 };

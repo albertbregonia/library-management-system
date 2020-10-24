@@ -20,6 +20,8 @@ public:
 	//Constructors
 	Book();
 	Book(long ISBN, string title, string author, string category, int id, string reader, long start, long end);
+	void operator<<(const fstream& file) const; //read object in
+	void operator>>(const fstream& file) const; //write object out
 
 	//Accessors
 	long getISBN();

@@ -34,8 +34,9 @@ Book* Startup::getBookByID(int id) {
 
 bool Startup::loadBooks() {
 	fstream bookData("data\\book.txt");
+	string line;
 	long ISBN, start, end;
-	string title, author, category, reader, line;
+	string title, author, category, reader;
 	int id;
 	if (bookData.is_open())
 		for (int i = 0; getline(bookData, line); i++) {

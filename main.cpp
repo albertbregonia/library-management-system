@@ -18,7 +18,14 @@ using namespace std;
 
 void startup();
 void start();
-void gui(bool teacher);
+void gui();
+Student current; //Current Student Info, if successful
+
+int main() {
+	startup();
+	start();
+	return 0;
+}
 
 //Load into RAM the book/student data
 void startup() {
@@ -34,24 +41,24 @@ void start() {
 	if (choice == 0)
 		UserAuthentication::signup(cin);
 	else {
-		while (!UserAuthentication::login(cin)) { //Attempt Login, Repeats until login is successful
+		while (!UserAuthentication::login(cin,current)) { //Attempt Login, Repeats until login is successful, result is stored in 'current'
 			cout << endl;
 			Display::border();
 			cerr << "Invalid Username and/or Password. Please try again." << endl << endl;
 			Display::border();
 		}
-		gui(false); //Load successful login menu based on 'false' for student or 'true' for teacher
+		gui(); //Load successful login menu based on 'false' for student or 'true' for teacher
 	}
 	cout << "You have successfully logged out of the Library Management System. Have a great day." << endl;
 }
 
-void gui(bool teacher) {
+void gui() {
 	Display::clrscr();
 	cout << endl;
 	Display::border();
 	cout << "You have successfully logged into the Library Management System." << endl;
 	int choice = 0;
-	Display::menu(teacher);
+	Display::menu();
 	cin >> choice;
 	while (choice > 0) {
 		switch (choice) {
@@ -72,7 +79,7 @@ void gui(bool teacher) {
 		default:
 			cout << "Invalid selection. Please enter a valid ID." << endl;
 		}
-		Display::menu(teacher);
+		Display::menu();
 		cin >> choice;
 		cout << endl << endl;
 		Display::border();
@@ -81,10 +88,4 @@ void gui(bool teacher) {
 	cout << "You have successfully logged out of the Library Management System. Have a great day." << endl;
 	Display::clrscr();
 	start();
-}
-
-int main() {
-	startup();
-	start();
-	return 0;
 }

@@ -22,20 +22,17 @@ bool UserAuthentication::signup(istream &in) {
 }
 
 //Attempt Login
-bool UserAuthentication::login(istream &in) {
+bool UserAuthentication::login(istream &in, Student& current) {
 	string user, pw;
 	cout << "Please enter your username: ";
 	in >> user;
 	cout << "Please enter your password: ";
 	in >> pw;
-	return success(user, pw);
-}
-
-//Check for Valid Username and Password
-bool UserAuthentication::success(string& username, string& password) {
-	for (Student s : Startup::getStudents())
-		if (s.getUsername() == username && s.getPassword() == password)
+	for (Student student : Startup::getStudents())
+		if (student.getUsername() == user && student.getPassword() == pw) {
+			current = student;
 			return true;
+		}
 	return false;
 }
 

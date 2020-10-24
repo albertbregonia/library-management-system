@@ -19,7 +19,7 @@ void Display::welcome() {
 void Display::border() {cout << "=============================================" << endl << endl;}
 
 //Displays options menu for users that are logged in
-void Display::menu(bool teacher) {
+void Display::menu() {
 	cout << endl;
 	border();
 	//As of 10/16, type is supposed to be 's' for student and 't' for teacher to change options
