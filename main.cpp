@@ -69,9 +69,9 @@ void gui() {
 		switch (choice) {
 		case 1: //Search for Books
 			break;
-		case 2: //Borrow Books
+		case 2: //Borrow Books - Submission 1
 			break;
-		case 3: //Return Books
+		case 3: //Return Books - Submission 1
 			break;
 		case 4: //Reserve Books
 			break;
@@ -82,6 +82,7 @@ void gui() {
 			break;
 		case 7: //Change Password
 			changePassword();
+			Database::save();
 			break;
 		default: //Invalid Input
 			cout << "Invalid selection. Please enter a valid ID." << endl;

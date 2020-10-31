@@ -25,6 +25,7 @@ ostream& Book::operator<<(ostream& out) const {  //show the information of the b
 		out << "Current Borrower: " << reader << endl;
 		out << "Start Date: " << start << endl;
 		out << "Expiration Date: " << end << endl;
+		out << "----------------" << endl;
 	}
 	else { //Write to File
 		out << ISBN << endl;

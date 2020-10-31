@@ -108,7 +108,11 @@ bool Database::loadStudents() {
 
 //Save current data into the databases 'book.txt' and 'student.txt'
 void Database::save() {
-	ofstream file("student.txt");
-	for (Student s : students)
-		s << file;
+	fstream file("data\\student.txt");
+	if (file.is_open())
+		for (Student s : students)
+			s << file;
+	else
+		cout << "Error writing to database file, 'student.txt'! Please resolve this issue or contact a system administrator." << endl;
+	file.close();
 }

@@ -48,8 +48,12 @@ ostream& Student::operator<<(ostream& out) const {
 		out << password << endl;
 		out << term << endl;
 		out << max << endl;
-		for (Book b : borrowed)
-			out << b.getID() << " ";
+		if (!borrowed.empty())
+			for (Book b : borrowed)
+				out << b.getID() << " ";
+		else
+			out << -1; //no books borrowed
+		out << endl << "----------------" << endl;
 	}
 	return out;
 }
