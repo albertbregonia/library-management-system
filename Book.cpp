@@ -102,7 +102,7 @@ istream& Book::operator>>(istream& in) {
 					end = stol(line);
 					break;
 				case 8: //line delimiter
-					Database::getBooks().push_back(Book(ISBN, title, author, category, id, reader, start, end));
+					Database::getBooks().push_back(*this);
 			}
 		}
 	return in;

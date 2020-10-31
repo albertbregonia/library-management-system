@@ -13,6 +13,7 @@
 #include "Display.h"
 #include "UserAuth.h"
 #include "Database.h"
+#include "Date.h"
 
 using namespace std;
 
@@ -83,14 +84,17 @@ void gui() {
 		Display::border();
 		switch (choice) {
 		case 1: //Search for Books
+			cout << "To be implemeneted" << endl;
 			break;
 		case 2: //Borrow Books - Submission 1
 			break;
 		case 3: //Return Books - Submission 1
 			break;
 		case 4: //Reserve Books
+			cout << "To be implemeneted" << endl;
 			break;
 		case 5: //Cancel Reservations
+			cout << "To be implemeneted" << endl;
 			break;
 		case 6: //About Me
 			Database::getStudents().at(current) << cout;
@@ -131,4 +135,22 @@ void changePassword() {
 	}
 	else
 		cout << "Change unsuccessful. Failed to verify user information." << endl;
+}
+
+//Option 2 - Boorow Books
+void borrowBooks() {
+	//Check if they haven't checked out more than their maximum
+	if (Database::getStudents().at(current).getMaxCopies() > Database::getStudents().at(current).getBorrowedBookList().size()) {
+		int id;
+		cout << "ID of desired book: ";
+		cin >> id;
+		for (Book b : Database::getBooks())
+			if (Database::getBookByID(id)->getBorrower() == "none") {
+				Database::getBookByID(id)->setBorrower(Database::getStudents().at(current).getUsername());
+				Database::getBookByID(id)->setStartDate(Date::getDays());
+				Database::getBookByID(id)->setExpirationDate(Date::getDays() + 6); //currently at 30 seconds or 6 days
+			}
+			else
+				cout << "Unfortunately, this book has already been borrowed by another user. Please choose a different book." << endl;
+	}
 }

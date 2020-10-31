@@ -6,8 +6,8 @@
 Student::Student(): 
 	username("none"),
 	password("none"),
-	term(0),
-	max(0),
+	term(30),
+	max(5),
 	borrowed(vector<Book>())
 {}
 Student::Student(string username, string password, int term, int max, vector<Book> borrowed):
