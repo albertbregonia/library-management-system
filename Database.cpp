@@ -16,8 +16,9 @@ vector<string> Database::split(string s) {
 	vector<string> v;
 	string temp("");
 	for (char c : s)
-		if (c == 32) {
-			v.push_back(temp);
+		if (c == 32 || c == s[s.length()-1]) {
+			if(!temp.empty())
+				v.push_back(temp);
 			temp = "";
 		}
 		else
@@ -25,11 +26,13 @@ vector<string> Database::split(string s) {
 	return v;
 }
 
-//Returns the book given an ID
-Book* Database::getBookByID(int id) {
-	for (Book b : books)
-		if (b.getID() == id)
-			return &b;
+//Returns the int of the book in the database given an ID
+int Database::getBookByID(int id) {
+	int index = -1;
+	for (int i = 0; i < books.size(); i++)
+		if (books.at(i).getID() == id)
+			index = i;
+	return index;
 }
 
 bool Database::loadBooks() {
@@ -54,11 +57,16 @@ bool Database::loadStudents() {
 
 //Save current data into the databases 'book.txt' and 'student.txt'
 void Database::save() {
-	ofstream file("data\\student.txt");
-	if (file.is_open())
+	ofstream studentFile("data\\student.txt");
+	ofstream bookFile("data\\book.txt");
+	if (studentFile.is_open() && bookFile.is_open()) {
 		for (Student s : students)
-			s << file;
+			s << studentFile;
+		for (Book b : books)
+			b << bookFile;
+	}
 	else
-		cout << "Error writing to database file, 'student.txt'! Please resolve this issue or contact a system administrator." << endl;
-	file.close();
+		cout << "Error writing to database files! Please resolve this issue or contact a system administrator." << endl;
+	studentFile.close();
+	bookFile.close();
 }

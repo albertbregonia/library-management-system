@@ -49,6 +49,7 @@ void Book::setExpirationDate(long end) {this->end = end;}
 ostream& Book::operator<<(ostream& out) const {  //show the information of the book
 	if (&out == &cout) { //Console Display
 		out << "ISBN: " << ISBN << endl;
+		out << "Title: " << title << endl;
 		out << "Author: " << author << endl;
 		out << "Category: " << category << endl;
 		out << "ID: " << id << endl;
@@ -58,6 +59,7 @@ ostream& Book::operator<<(ostream& out) const {  //show the information of the b
 	}
 	else { //Write to File
 		out << ISBN << endl;
+		out << title << endl;
 		out << author << endl;
 		out << category << endl;
 		out << id << endl;
