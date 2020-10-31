@@ -106,7 +106,9 @@ bool Database::loadStudents() {
 	return studentData.is_open();
 }
 
-//Destructor to save current data into the databases 'book.txt' and 'student.txt'
-Database::~Database() {
-
+//Save current data into the databases 'book.txt' and 'student.txt'
+void Database::save() {
+	ofstream file("student.txt");
+	for (Student s : students)
+		s << file;
 }

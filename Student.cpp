@@ -32,5 +32,29 @@ void Student::setBorrowedBooks(vector<Book> borrowed) { this->borrowed = borrowe
 
 //Overloaded Operators
 ostream& Student::operator<<(ostream& out) const {
+	if (&out == &cout) { //Console Display
+		out << "Username: " << username << endl;
+		out << "Password: " << password << endl;
+		out << "Borrow Period: " << term << endl;
+		out << "Max Number of Books you are able to Borrow: " << max << endl;
+		out << "Currently Borrowed Books: " << endl << endl;
+		for (Book b : borrowed) {
+			b << out;
+			out << endl;
+		}
+	}
+	else { //Write to File
+		out << username << endl;
+		out << password << endl;
+		out << term << endl;
+		out << max << endl;
+		for (Book b : borrowed)
+			out << b.getID() << " ";
+	}
 	return out;
+}
+
+istream& Student::operator>>(istream& in) const {
+	
+	return in;
 }

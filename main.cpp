@@ -12,7 +12,7 @@
 
 #include "Display.h"
 #include "UserAuth.h"
-#include "Startup.h"
+#include "Database.h"
 
 using namespace std;
 
@@ -34,7 +34,7 @@ int main() {
 
 //Load into RAM the book/student data upon failure, the system aborts
 void startup() {
-	if (!Startup::loadBooks() || !Startup::loadStudents())
+	if (!Database::loadBooks() || !Database::loadStudents())
 		exit(-1);
 }
 
@@ -78,8 +78,7 @@ void gui() {
 		case 5: //Cancel Reservations
 			break;
 		case 6: //About Me
-			for (Book b : Startup::getBooks())
-				b << cout;
+			current << cout;
 			break;
 		case 7: //Change Password
 			changePassword();

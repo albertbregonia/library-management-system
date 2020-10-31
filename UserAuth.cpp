@@ -6,7 +6,7 @@
 #include "Display.h"
 #include "UserAuth.h"
 #include "Student.h"
-#include "Startup.h"
+#include "Database.h"
 
 using namespace std;
 
@@ -20,7 +20,7 @@ bool UserAuthentication::signup(istream &in) {
 	Student s = Student();
 	s.setUsername(user);
 	s.setPassword(pw);
-	Startup::getStudents().push_back(s);
+	Database::getStudents().push_back(s);
 	return true;
 }
 
@@ -31,7 +31,7 @@ bool UserAuthentication::login(istream &in, Student& current) {
 	in >> user;
 	cout << "Please enter your password: ";
 	in >> pw;
-	for (Student student : Startup::getStudents())
+	for (Student student : Database::getStudents())
 		if (student.getUsername() == user && student.getPassword() == pw) {
 			current = student;
 			return true;

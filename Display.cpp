@@ -5,7 +5,7 @@
 
 using namespace std;
 
-//Display Welcome Message on Startup
+//Display Welcome Message on Database
 void Display::welcome() {
 	border();
 	cout << "Welcome to the Library" << endl << endl;

@@ -17,14 +17,24 @@ Book::Book(string ISBN, string title, string author, string category, int id, st
 {}
 
 ostream& Book::operator<<(ostream& out) const {  //show the information of the book
-	out << ISBN << endl;
-	out << title << endl;
-	out << author << endl;
-	out << category << endl;
-	out << id << endl;
-	out << reader << endl;
-	out << start << endl;
-	out << end << endl;
+	if (&out == &cout) { //Console Display
+		out << "ISBN: " << ISBN << endl;
+		out << "Author: " << author << endl;
+		out << "Category: " << category << endl;
+		out << "ID: " << id << endl;
+		out << "Current Borrower: " << reader << endl;
+		out << "Start Date: " << start << endl;
+		out << "Expiration Date: " << end << endl;
+	}
+	else { //Write to File
+		out << ISBN << endl;
+		out << author << endl;
+		out << category << endl;
+		out << id << endl;
+		out << reader << endl;
+		out << start << endl;
+		out << end << endl;
+	}
 	return out;
 }
 
