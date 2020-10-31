@@ -104,7 +104,7 @@ void Student::borrowBooks(istream& in) {
 			cout << "Invalid ID. A book with that ID was not found." << endl;
 			return;
 		}
-		Book* desired = &Database::getBooks().at(Database::getBookByID(id));
+		Book* desired = &Database::getBooks().at(Database::getBookByID(id)); //A pointer is used here to modify the value directly in the database instead of a copy of the value
 		if (desired->getBorrower() == "none") { //If nobody has borrowed the book, set the book's information to that of the borrower
 			desired->setBorrower(username);
 			desired->setStartDate(Date::getDays()); //set start period to current date
@@ -131,7 +131,7 @@ void Student::returnBooks(istream& in) {
 		return;
 	}
 	else {
-		Book* desired = &Database::getBooks().at(Database::getBookByID(id));
+		Book* desired = &Database::getBooks().at(Database::getBookByID(id)); //A pointer is used here to modify the value directly in the database instead of a copy of the value
 		for (int i=0; i<borrowed.size(); i++)
 			if (borrowed.at(i).getID() == id) { //Check if the user has borrowed a book with the given ID
 				desired->setBorrower("none"); //Reset Book attributes
