@@ -24,7 +24,7 @@ void start();
 void gui();
 void changePassword();
 
-Student current; //Current Student Info, if successful
+int current; //Current Student Info, if successful
 
 int main() {
 	startup();
@@ -48,7 +48,8 @@ void start() {
 	if (choice == 0)
 		UserAuthentication::signup(cin);
 	else {
-		while (!UserAuthentication::login(cin,current)) { //Attempt Login, Repeats until login is successful, result is stored in 'current'
+		Display::clrscr();
+		while ((current = UserAuthentication::login(cin))<0) { //Attempt Login, Repeats until login is successful, result is stored in 'current'
 			cout << endl;
 			Display::border();
 			cerr << "Invalid Username and/or Password. Please try again." << endl << endl;
@@ -80,7 +81,7 @@ void gui() {
 		case 5: //Cancel Reservations
 			break;
 		case 6: //About Me
-			current << cout;
+			Database::getStudents().at(current) << cout;
 			break;
 		case 7: //Change Password
 			changePassword();
@@ -97,6 +98,7 @@ void gui() {
 	Display::clrscr();
 	Display::clrscr();
 	Display::border();
+	Database::save(); //write database data back to files
 	cout << "You have successfully logged out of the Library Management System. Have a great day." << endl << endl;
 	start();
 }
@@ -106,10 +108,12 @@ void changePassword() {
 	string pw;
 	cout << "Enter your current password: ";
 	cin >> pw;
-	if (pw == current.getPassword()) {
+	if (pw == Database::getStudents().at(current).getPassword()) {
 		cout << "Enter your new desired password: ";
 		cin >> pw;
-		current.setPassword(pw);
+		for (Student s : Database::getStudents()) //change in the database as well as the current session
+			if (s.getUsername() == Database::getStudents().at(current).getUsername() && s.getPassword() == Database::getStudents().at(current).getPassword())
+				Database::getStudents().at(current).setPassword(pw);
 		cout << "Change successful." << endl;
 	}
 	else

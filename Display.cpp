@@ -12,7 +12,7 @@ void Display::welcome() {
 	border();
 	cout << "What would you like to do?" << endl;
 	cout << "\t0 -- Sign Up" << endl;
-	cout << "\tDefault -- Login" << endl << endl;
+	cout << "\t1 -- Login" << endl << endl;
 }
 
 //Display Text Border
@@ -35,6 +35,6 @@ void Display::menu() {
 }
 
 void Display::clrscr() {
-	for (int i = 0; i < 14; i++)
-		cout << endl; //clear the screen
+	for (int i = 0; i < 8; i++)
+		cout << endl; //pseudo clear the screen
 }

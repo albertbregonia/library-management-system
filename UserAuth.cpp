@@ -26,17 +26,15 @@ bool UserAuthentication::signup(istream &in) {
 }
 
 //Attempt Login
-bool UserAuthentication::login(istream &in, Student& current) {
+int UserAuthentication::login(istream &in) {
 	string user, pw;
 	cout << "Please enter your username: ";
 	in >> user;
 	cout << "Please enter your password: ";
 	in >> pw;
-	for (Student student : Database::getStudents())
-		if (student.getUsername() == user && student.getPassword() == pw) {
-			current = student;
-			return true;
-		}
-	return false;
+	for (int i=0; i<Database::getStudents().size(); i++)
+		if (Database::getStudents().at(i).getUsername() == user && Database::getStudents().at(i).getPassword() == pw)
+			return i; //returns the index of the student in the database
+	return -1;
 }
 

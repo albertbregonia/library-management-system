@@ -6,10 +6,12 @@
 
 //Initialize Static Variables
 vector<Book> Database::books = vector<Book>();
+vector<Book> Database::available = vector<Book>();
 vector<Student> Database::students = vector<Student>();
 
 vector<Student>& Database::getStudents() { return students; }
 vector<Book>& Database::getBooks() { return books; }
+vector<Book>& Database::getAvailable() { return available; } //List of available books
 
 //splits a string delimited by spaces and returns a vector<string> with data given from said string
 vector<string> Database::split(string s) {

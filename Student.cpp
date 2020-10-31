@@ -83,9 +83,9 @@ istream& Student::operator>>(istream& in) {
 					borrowed.clear();
 					for (string id : Database::split(line))
 						borrowed.push_back(*Database::getBookByID(stoi(id)));
+					break;
 				case 5: //line delimiter
 					Database::getStudents().push_back(*this);
-					break;
 			}
 		}
 	return in;
