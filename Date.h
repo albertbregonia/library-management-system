@@ -3,7 +3,7 @@
 
 class Date {
 private:
-	const static int dayUnit = 60; // 1 minute = 1 day
+	const static int dayUnit = 5; // 5 seconds = 1 day
 public:
 	static int getDays();
 };

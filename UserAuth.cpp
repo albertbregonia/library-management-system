@@ -17,7 +17,10 @@ bool UserAuthentication::signup(istream &in) {
 	in >> user;
 	cout << "Please enter your desired password: ";
 	in >> pw;
-	//****TO DO: Update System****//
+	Student s = Student();
+	s.setUsername(user);
+	s.setPassword(pw);
+	Startup::getStudents().push_back(s);
 	return true;
 }
 

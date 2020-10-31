@@ -7,7 +7,7 @@ using namespace std;
 class Book {
 
 private:
-	long ISBN;
+	string ISBN;
 	string title;
 	string author;
 	string category;
@@ -19,12 +19,10 @@ private:
 public:
 	//Constructors
 	Book();
-	Book(long ISBN, string title, string author, string category, int id, string reader, long start, long end);
-	void operator<<(const fstream& file) const; //read object in
-	void operator>>(const fstream& file) const; //write object out
+	Book(string ISBN, string title, string author, string category, int id, string reader, long start, long end);
 
 	//Accessors
-	long getISBN();
+	string getISBN();
 	string getTitle();
 	string getAuthor();
 	string getCategory();
@@ -34,7 +32,7 @@ public:
 	long getExpirationDate();
 
 	//Mutators
-	void setISBN(long ISBN);
+	void setISBN(string ISBN);
 	void setTitle(string title);
 	void setAuthor(string author);
 	void setCategory(string category);
@@ -43,6 +41,7 @@ public:
 	void setStartDate(long start);
 	void setExpirationDate(long end);
 
-	//Display
-	void print();
+	//Overloaded Operators
+	ostream& operator<<(ostream& out) const;
+	istream& operator>>(istream& in) const;
 };

@@ -33,4 +33,8 @@ public:
 	void setTerm(int term);
 	void setMaxCopies(int max);
 	void setBorrowedBooks(vector<Book> borrowed);
+
+	//Overloaded Operators
+	ostream& operator<<(ostream& out) const;
+	istream& operator>>(istream& in) const;
 };

@@ -35,6 +35,6 @@ void Display::menu() {
 }
 
 void Display::clrscr() {
-	for (int i = 0; i < 50; i++)
+	for (int i = 0; i < 14; i++)
 		cout << endl; //clear the screen
 }

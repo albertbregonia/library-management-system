@@ -6,7 +6,7 @@
 
 //Constructors
 Book::Book() {}
-Book::Book(long ISBN, string title, string author, string category, int id, string reader, long start, long end) :
+Book::Book(string ISBN, string title, string author, string category, int id, string reader, long start, long end) :
 	ISBN(ISBN),
 	author(author),
 	category(category),
@@ -16,19 +16,20 @@ Book::Book(long ISBN, string title, string author, string category, int id, stri
 	end(end)
 {}
 
-void Book::print() {  //show the information of the book
-	cout << "\tISBN:" << ISBN << endl;
-	cout << "\ttitle:" << title << endl;
-	cout << "\tauthor:" << author << endl;
-	cout << "\tcategory:" << category << endl;
-	cout << "\tID:"<< id << endl;
-	cout << "\tReader:" << reader << endl;
-	cout << "\tStart date:" << start << endl;
-	cout << "\tExpiration date:" << end << endl;
+ostream& Book::operator<<(ostream& out) const {  //show the information of the book
+	out << ISBN << endl;
+	out << title << endl;
+	out << author << endl;
+	out << category << endl;
+	out << id << endl;
+	out << reader << endl;
+	out << start << endl;
+	out << end << endl;
+	return out;
 }
 
 //Accessors
-long Book::getISBN() {return ISBN;}
+string Book::getISBN() {return ISBN;}
 string Book::getTitle() {return title;}
 string Book::getAuthor() {return author;}
 string Book::getCategory() {return category;}
@@ -38,7 +39,7 @@ long Book::getStartDate() {return start;}
 long Book::getExpirationDate() {return end;}
 
 //Mutators
-void Book::setISBN(long ISBN) {this->ISBN = ISBN;}
+void Book::setISBN(string ISBN) {this->ISBN = ISBN;}
 void Book::setTitle(string title) {this->title = title;}
 void Book::setAuthor(string author) {this->author = author;}
 void Book::setCategory(string category) {this->category = category;}

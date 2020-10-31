@@ -16,9 +16,14 @@
 
 using namespace std;
 
+//Setup
 void startup();
 void start();
+
+//UI
 void gui();
+void changePassword();
+
 Student current; //Current Student Info, if successful
 
 int main() {
@@ -27,7 +32,7 @@ int main() {
 	return 0;
 }
 
-//Load into RAM the book/student data
+//Load into RAM the book/student data upon failure, the system aborts
 void startup() {
 	if (!Startup::loadBooks() || !Startup::loadStudents())
 		exit(-1);
@@ -47,45 +52,64 @@ void start() {
 			cerr << "Invalid Username and/or Password. Please try again." << endl << endl;
 			Display::border();
 		}
-		gui(); //Load successful login menu based on 'false' for student or 'true' for teacher
+		gui(); //Load successful login menu
 	}
-	cout << "You have successfully logged out of the Library Management System. Have a great day." << endl;
 }
 
 void gui() {
 	Display::clrscr();
-	cout << endl;
 	Display::border();
 	cout << "You have successfully logged into the Library Management System." << endl;
 	int choice = 0;
 	Display::menu();
+	Display::clrscr();
 	cin >> choice;
 	while (choice > 0) {
+		Display::border();
 		switch (choice) {
-		case 1:
+		case 1: //Search for Books
 			break;
-		case 2:
+		case 2: //Borrow Books
 			break;
-		case 3:
+		case 3: //Return Books
 			break;
-		case 4:
+		case 4: //Reserve Books
 			break;
-		case 5:
+		case 5: //Cancel Reservations
 			break;
-		case 6:
+		case 6: //About Me
+			for (Book b : Startup::getBooks())
+				b << cout;
 			break;
-		case 7:
+		case 7: //Change Password
+			changePassword();
 			break;
-		default:
+		default: //Invalid Input
 			cout << "Invalid selection. Please enter a valid ID." << endl;
 		}
 		Display::menu();
+		Display::clrscr();
 		cin >> choice;
 		cout << endl << endl;
-		Display::border();
-		Display::clrscr();
 	}
-	cout << "You have successfully logged out of the Library Management System. Have a great day." << endl;
 	Display::clrscr();
+	Display::clrscr();
+	Display::border();
+	cout << "You have successfully logged out of the Library Management System. Have a great day." << endl << endl;
 	start();
+}
+
+//Option 7 - Change Current User's Password
+void changePassword() {
+	string pw;
+	cout << "Enter your current password: ";
+	cin >> pw;
+	if (pw == current.getPassword()) {
+		cout << "Enter your new desired password: ";
+		cin >> pw;
+		current.setPassword(pw);
+		cout << "Change successful." << endl;
+	}
+	else
+		cout << "Change unsuccessful. Failed to verify user information." << endl;
 }
