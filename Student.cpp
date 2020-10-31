@@ -106,18 +106,18 @@ void Student::borrow(istream& in) {
 			return;
 		}
 		Book* desired = &Database::getBooks().at(Database::getBookByID(id));
-		if (desired->getBorrower() == "none") {
+		if (desired->getBorrower() == "none") { //If nobody has borrowed the book, set the book's information to that of the borrower
 			desired->setBorrower(username);
-			desired->setStartDate(Date::getDays());
-			desired->setExpirationDate(Date::getDays() + 6); //currently at 30 seconds or 6 days
+			desired->setStartDate(Date::getDays()); //set start period to current date
+			desired->setExpirationDate(Date::getDays() + 6); //currently at 30 seconds or 6 days of expiration
 			borrowed.push_back(*desired);
 			Database::save();
 			cout << endl << "Successfully borrowed Book #" << id << endl << endl << endl;
-			Database::getBooks().at(Database::getBookByID(id)) << cout;
+			Database::getBooks().at(Database::getBookByID(id)) << cout; //Print recently borrowed book info
 			return;
 		}
 		else
-			cout << "Unfortunately, this book has already been borrowed by another user. Please choose a different book." << endl;
+			cout << "Unfortunately, this book has already been borrowed. Please choose a different book." << endl;
 	}
 	else
 		cout << "You have reached your limit on books! Please return a book. " << endl;
