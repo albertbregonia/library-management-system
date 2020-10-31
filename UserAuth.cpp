@@ -21,6 +21,7 @@ bool UserAuthentication::signup(istream &in) {
 	s.setUsername(user);
 	s.setPassword(pw);
 	Database::getStudents().push_back(s);
+	Database::save();
 	return true;
 }
 

@@ -43,5 +43,5 @@ public:
 
 	//Overloaded Operators
 	ostream& operator<<(ostream& out) const;
-	//istream& operator>>(istream& in) const;
+	istream& operator>>(istream& in);
 };

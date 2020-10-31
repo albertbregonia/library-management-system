@@ -34,8 +34,10 @@ int main() {
 
 //Load into RAM the book/student data upon failure, the system aborts
 void startup() {
-	if (!Database::loadBooks() || !Database::loadStudents())
-		exit(-1);
+	if (!Database::loadBooks())
+		exit(-3);
+	else if (!Database::loadStudents())
+		exit(-4);
 }
 
 //Welcome and Login Menu

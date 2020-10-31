@@ -1,5 +1,6 @@
-#include "Student.h"
 #include <iostream>
+#include "Student.h"
+#include "Database.h"
 
 //Constructors
 Student::Student(): 
@@ -52,13 +53,40 @@ ostream& Student::operator<<(ostream& out) const {
 			for (Book b : borrowed)
 				out << b.getID() << " ";
 		else
-			out << -1; //no books borrowed
+			out << -1;
 		out << endl << "----------------" << endl;
 	}
 	return out;
 }
 
-istream& Student::operator>>(istream& in) const {
-	
+istream& Student::operator>>(istream& in) {
+	string line;
+	if (!in.eof())
+		for (int i = 0; i < 6; i++) {
+			getline(in,line);
+			if (line.empty())
+				break;
+			switch (i) {
+				case 0:
+					username = line;
+					break;
+				case 1:
+					password = line;
+					break;
+				case 2:
+					term = stoi(line);
+					break;
+				case 3:
+					max = stoi(line);
+					break;
+				case 4:
+					borrowed.clear();
+					for (string id : Database::split(line))
+						borrowed.push_back(*Database::getBookByID(stoi(id)));
+				case 5: //line delimiter
+					Database::getStudents().push_back(*this);
+					break;
+			}
+		}
 	return in;
 }
