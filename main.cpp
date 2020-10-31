@@ -86,9 +86,10 @@ void gui() {
 			cout << "To be implemeneted" << endl;
 			break;
 		case 2: //Borrow Books - Submission 1
-			Database::getStudents().at(current).borrow(cin);
+			Database::getStudents().at(current).borrowBooks(cin);
 			break;
 		case 3: //Return Books - Submission 1
+			Database::getStudents().at(current).returnBooks(cin);
 			break;
 		case 4: //Reserve Books
 			cout << "To be implemeneted" << endl;

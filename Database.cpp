@@ -35,6 +35,7 @@ int Database::getBookByID(int id) {
 	return index;
 }
 
+//Loads all the books from the database file 'book.txt'
 bool Database::loadBooks() {
 	fstream bookData("data\\book.txt");
 	Book b = Book();
@@ -45,6 +46,7 @@ bool Database::loadBooks() {
 	return Database::getBooks().size() > 0;
 }
 
+//Loads all the student accounts from the database file 'student.txt'
 bool Database::loadStudents() {
 	fstream studentData("data\\student.txt");
 	Student s = Student();

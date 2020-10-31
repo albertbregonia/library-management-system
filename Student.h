@@ -41,5 +41,6 @@ public:
 	bool operator==(Student& s) const;
 
 	//User Actions
-	void borrow(istream& in);
+	void borrowBooks(istream& in);
+	void returnBooks(istream& in);
 };
