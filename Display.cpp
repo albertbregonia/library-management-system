@@ -22,7 +22,6 @@ void Display::border() {cout << "=============================================" 
 void Display::menu() {
 	cout << endl;
 	border();
-	//As of 10/16, type is supposed to be 's' for student and 't' for teacher to change options
 	string options[] = { "Search for Books", "Borrow Books", "Return Books", "Reserve Books", "Cancel Reservations", "About Me", "Change Password", "Log Out" };
 	for (int i = 0; i < sizeof(options) / sizeof(string); i++) {
 		if (i == 0)

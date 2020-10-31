@@ -24,8 +24,9 @@ void start();
 void gui();
 void changePassword();
 
-int current; //Current Student Info, if successful
+int current = -1; //Index of current student in the database, if successful this value is > 0
 
+//Runner
 int main() {
 	startup();
 	start();
@@ -44,9 +45,19 @@ void startup() {
 void start() {
 	Display::welcome();
 	int choice;
+	Display::clrscr();
+	cout << "Choice: ";
 	cin >> choice;
-	if (choice == 0)
-		UserAuthentication::signup(cin);
+	if (choice == 0) {
+		while(!UserAuthentication::signup(cin)){
+			Display::clrscr();
+			Display::border();
+			cout << "This user already exists! Please choose a different username." << endl << endl;
+			Display::border();
+		}
+		Display::clrscr();
+		start();
+	}
 	else {
 		Display::clrscr();
 		while ((current = UserAuthentication::login(cin))<0) { //Attempt Login, Repeats until login is successful, result is stored in 'current'
@@ -66,6 +77,7 @@ void gui() {
 	int choice = 0;
 	Display::menu();
 	Display::clrscr();
+	cout << "Choice: ";
 	cin >> choice;
 	while (choice > 0) {
 		Display::border();
@@ -92,6 +104,7 @@ void gui() {
 		}
 		Display::menu();
 		Display::clrscr();
+		cout << "Choice: ";
 		cin >> choice;
 		cout << endl << endl;
 	}
@@ -112,7 +125,7 @@ void changePassword() {
 		cout << "Enter your new desired password: ";
 		cin >> pw;
 		for (Student s : Database::getStudents()) //change in the database as well as the current session
-			if (s.getUsername() == Database::getStudents().at(current).getUsername() && s.getPassword() == Database::getStudents().at(current).getPassword())
+			if (s == Database::getStudents().at(current))
 				Database::getStudents().at(current).setPassword(pw);
 		cout << "Change successful." << endl;
 	}

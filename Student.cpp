@@ -90,3 +90,5 @@ istream& Student::operator>>(istream& in) {
 		}
 	return in;
 }
+
+bool Student::operator==(Student& s) const { return username == s.getUsername() && password == s.getPassword(); }
