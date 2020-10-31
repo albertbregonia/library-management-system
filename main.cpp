@@ -13,6 +13,7 @@
 #include "Display.h"
 #include "UserAuth.h"
 #include "Database.h"
+#include "Date.h"
 
 using namespace std;
 
@@ -24,8 +25,9 @@ void start();
 void gui();
 void changePassword();
 
-Student current; //Current Student Info, if successful
+int current = -1; //Index of current student in the database, if successful this value is > 0
 
+//Runner
 int main() {
 	startup();
 	start();
@@ -34,19 +36,32 @@ int main() {
 
 //Load into RAM the book/student data upon failure, the system aborts
 void startup() {
-	if (!Database::loadBooks() || !Database::loadStudents())
-		exit(-1);
+	if (!Database::loadBooks())
+		exit(-3);
+	else if (!Database::loadStudents())
+		exit(-4);
 }
 
 //Welcome and Login Menu
 void start() {
 	Display::welcome();
 	int choice;
+	Display::clrscr();
+	cout << "Choice: ";
 	cin >> choice;
-	if (choice == 0)
-		UserAuthentication::signup(cin);
+	if (choice == 0) {
+		while(!UserAuthentication::signup(cin)){
+			Display::clrscr();
+			Display::border();
+			cout << "This user already exists! Please choose a different username." << endl << endl;
+			Display::border();
+		}
+		Display::clrscr();
+		start();
+	}
 	else {
-		while (!UserAuthentication::login(cin,current)) { //Attempt Login, Repeats until login is successful, result is stored in 'current'
+		Display::clrscr();
+		while ((current = UserAuthentication::login(cin))<0) { //Attempt Login, Repeats until login is successful, result is stored in 'current'
 			cout << endl;
 			Display::border();
 			cerr << "Invalid Username and/or Password. Please try again." << endl << endl;
@@ -63,22 +78,26 @@ void gui() {
 	int choice = 0;
 	Display::menu();
 	Display::clrscr();
+	cout << "Choice: ";
 	cin >> choice;
 	while (choice > 0) {
 		Display::border();
 		switch (choice) {
 		case 1: //Search for Books
+			cout << "To be implemeneted" << endl;
 			break;
 		case 2: //Borrow Books - Submission 1
 			break;
 		case 3: //Return Books - Submission 1
 			break;
 		case 4: //Reserve Books
+			cout << "To be implemeneted" << endl;
 			break;
 		case 5: //Cancel Reservations
+			cout << "To be implemeneted" << endl;
 			break;
 		case 6: //About Me
-			current << cout;
+			Database::getStudents().at(current) << cout;
 			break;
 		case 7: //Change Password
 			changePassword();
@@ -89,12 +108,14 @@ void gui() {
 		}
 		Display::menu();
 		Display::clrscr();
+		cout << "Choice: ";
 		cin >> choice;
 		cout << endl << endl;
 	}
 	Display::clrscr();
 	Display::clrscr();
 	Display::border();
+	Database::save(); //write database data back to files
 	cout << "You have successfully logged out of the Library Management System. Have a great day." << endl << endl;
 	start();
 }
@@ -104,12 +125,32 @@ void changePassword() {
 	string pw;
 	cout << "Enter your current password: ";
 	cin >> pw;
-	if (pw == current.getPassword()) {
+	if (pw == Database::getStudents().at(current).getPassword()) {
 		cout << "Enter your new desired password: ";
 		cin >> pw;
-		current.setPassword(pw);
+		for (Student s : Database::getStudents()) //change in the database as well as the current session
+			if (s == Database::getStudents().at(current))
+				Database::getStudents().at(current).setPassword(pw);
 		cout << "Change successful." << endl;
 	}
 	else
 		cout << "Change unsuccessful. Failed to verify user information." << endl;
+}
+
+//Option 2 - Boorow Books
+void borrowBooks() {
+	//Check if they haven't checked out more than their maximum
+	if (Database::getStudents().at(current).getMaxCopies() > Database::getStudents().at(current).getBorrowedBookList().size()) {
+		int id;
+		cout << "ID of desired book: ";
+		cin >> id;
+		for (Book b : Database::getBooks())
+			if (Database::getBookByID(id)->getBorrower() == "none") {
+				Database::getBookByID(id)->setBorrower(Database::getStudents().at(current).getUsername());
+				Database::getBookByID(id)->setStartDate(Date::getDays());
+				Database::getBookByID(id)->setExpirationDate(Date::getDays() + 6); //currently at 30 seconds or 6 days
+			}
+			else
+				cout << "Unfortunately, this book has already been borrowed by another user. Please choose a different book." << endl;
+	}
 }

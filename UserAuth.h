@@ -9,5 +9,5 @@ using namespace std;
 class UserAuthentication {
 public:
 	static bool signup(istream& in);
-	static bool login(istream& in, Student& s);
+	static int login(istream& in);
 };

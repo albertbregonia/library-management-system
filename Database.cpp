@@ -8,11 +8,11 @@
 vector<Book> Database::books = vector<Book>();
 vector<Student> Database::students = vector<Student>();
 
-vector<Student> Database::getStudents() { return students; }
-vector<Book> Database::getBooks() { return books; }
+vector<Student>& Database::getStudents() { return students; }
+vector<Book>& Database::getBooks() { return books; }
 
 //splits a string delimited by spaces and returns a vector<string> with data given from said string
-vector<string> split(string s) {
+vector<string> Database::split(string s) {
 	vector<string> v;
 	string temp("");
 	for (char c : s)
@@ -34,81 +34,27 @@ Book* Database::getBookByID(int id) {
 
 bool Database::loadBooks() {
 	fstream bookData("data\\book.txt");
-	string line;
-	long start, end;
-	string ISBN, title, author, category, reader;
-	int id;
+	Book b = Book();
 	if (bookData.is_open())
-		for (int i = 0; getline(bookData, line); i++) {
-			switch (i) {
-				case 0:
-					ISBN = line;
-					break;
-				case 1:
-					title = line;
-					break;
-				case 2:
-					author = line;
-					break;
-				case 3:
-					category = line;
-					break;
-				case 4:
-					id = stoi(line);
-					break;
-				case 5:
-					reader = line;
-					break;
-				case 6:
-					start = stol(line);
-					break;
-				case 7:
-					end = stol(line);
-					books.push_back(Book(ISBN, title, author, category, id, reader, start, end));
-					break;
-				default:
-					i = -1;
-			}
-		}
-	return bookData.is_open();
+		while (!bookData.eof())
+			b >> bookData;
+	bookData.close();
+	return Database::getBooks().size() > 0;
 }
 
 bool Database::loadStudents() {
 	fstream studentData("data\\student.txt");
-	string username, password;
-	int term, max;
-	string line;
-	vector<Book> bookList;
+	Student s = Student();
 	if (studentData.is_open())
-		for (int i = 0; getline(studentData, line); i++)
-			switch (i) {
-				case 0:
-					username = line;
-					break;
-				case 1:
-					password = line;
-					break;
-				case 2:
-					term = stoi(line);
-					break;
-				case 3:
-					max = stoi(line);
-					break;
-				case 4:
-					bookList.clear();
-					for (string id : split(line))
-						books.push_back(*getBookByID(stoi(id)));
-					students.push_back(Student(username, password, term, max, bookList));
-					break;
-				default:
-					i = -1;
-			}
-	return studentData.is_open();
+		while (!studentData.eof())
+			s >> studentData;
+	studentData.close();
+	return Database::getStudents().size()>0;
 }
 
 //Save current data into the databases 'book.txt' and 'student.txt'
 void Database::save() {
-	fstream file("data\\student.txt");
+	ofstream file("data\\student.txt");
 	if (file.is_open())
 		for (Student s : students)
 			s << file;

@@ -12,7 +12,7 @@ void Display::welcome() {
 	border();
 	cout << "What would you like to do?" << endl;
 	cout << "\t0 -- Sign Up" << endl;
-	cout << "\tDefault -- Login" << endl << endl;
+	cout << "\t1 -- Login" << endl << endl;
 }
 
 //Display Text Border
@@ -22,7 +22,6 @@ void Display::border() {cout << "=============================================" 
 void Display::menu() {
 	cout << endl;
 	border();
-	//As of 10/16, type is supposed to be 's' for student and 't' for teacher to change options
 	string options[] = { "Search for Books", "Borrow Books", "Return Books", "Reserve Books", "Cancel Reservations", "About Me", "Change Password", "Log Out" };
 	for (int i = 0; i < sizeof(options) / sizeof(string); i++) {
 		if (i == 0)
@@ -35,6 +34,6 @@ void Display::menu() {
 }
 
 void Display::clrscr() {
-	for (int i = 0; i < 14; i++)
-		cout << endl; //clear the screen
+	for (int i = 0; i < 8; i++)
+		cout << endl; //pseudo clear the screen
 }

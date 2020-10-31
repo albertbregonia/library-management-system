@@ -1,12 +1,13 @@
-#include "Student.h"
 #include <iostream>
+#include "Student.h"
+#include "Database.h"
 
 //Constructors
 Student::Student(): 
 	username("none"),
 	password("none"),
-	term(0),
-	max(0),
+	term(30),
+	max(5),
 	borrowed(vector<Book>())
 {}
 Student::Student(string username, string password, int term, int max, vector<Book> borrowed):
@@ -52,13 +53,42 @@ ostream& Student::operator<<(ostream& out) const {
 			for (Book b : borrowed)
 				out << b.getID() << " ";
 		else
-			out << -1; //no books borrowed
+			out << -1;
 		out << endl << "----------------" << endl;
 	}
 	return out;
 }
 
-istream& Student::operator>>(istream& in) const {
-	
+istream& Student::operator>>(istream& in) {
+	string line;
+	if (!in.eof())
+		for (int i = 0; i < 6; i++) {
+			getline(in,line);
+			if (line.empty())
+				break;
+			switch (i) {
+				case 0:
+					username = line;
+					break;
+				case 1:
+					password = line;
+					break;
+				case 2:
+					term = stoi(line);
+					break;
+				case 3:
+					max = stoi(line);
+					break;
+				case 4:
+					borrowed.clear();
+					for (string id : Database::split(line))
+						borrowed.push_back(*Database::getBookByID(stoi(id)));
+					break;
+				case 5: //line delimiter
+					Database::getStudents().push_back(*this);
+			}
+		}
 	return in;
 }
+
+bool Student::operator==(Student& s) const { return username == s.getUsername() && password == s.getPassword(); }
