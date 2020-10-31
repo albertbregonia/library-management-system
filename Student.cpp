@@ -53,7 +53,7 @@ ostream& Student::operator<<(ostream& out) const {
 			for (Book b : borrowed)
 				out << b.getID() << " ";
 		else
-			out << -1;
+			out << -10 << " "; //Indicates no books borrowed
 		out << endl << "----------------" << endl;
 	}
 	return out;
@@ -82,7 +82,8 @@ istream& Student::operator>>(istream& in) {
 				case 4:
 					borrowed.clear();
 					for (string id : Database::split(line))
-						borrowed.push_back(*Database::getBookByID(stoi(id)));
+						if(stoi(id)>0)
+							borrowed.push_back(Database::getBooks().at(Database::getBookByID(stoi(id))));
 					break;
 				case 5: //line delimiter
 					Database::getStudents().push_back(*this);
@@ -92,3 +93,62 @@ istream& Student::operator>>(istream& in) {
 }
 
 bool Student::operator==(Student& s) const { return username == s.getUsername() && password == s.getPassword(); }
+
+//Option 2 - Boorow Books
+void Student::borrowBooks(istream& in) {
+	if (max > borrowed.size()) { //Check if they haven't checked out more than their maximum
+		int id;
+		cout << "ID of desired book: "; //Input for desired book ID
+		in >> id;
+		if (Database::getBookByID(id) < 0) { //Check for invalid ID
+			cout << "Invalid ID. A book with that ID was not found." << endl;
+			return;
+		}
+		Book* desired = &Database::getBooks().at(Database::getBookByID(id));
+		if (desired->getBorrower() == "none") { //If nobody has borrowed the book, set the book's information to that of the borrower
+			desired->setBorrower(username);
+			desired->setStartDate(Date::getDays()); //set start period to current date
+			desired->setExpirationDate(Date::getDays() + 6); //currently at 30 seconds or 6 days of expiration
+			borrowed.push_back(*desired);
+			Database::save(); //write back to database files
+			cout << endl << "Successfully borrowed Book #" << id << endl << endl << endl;
+			Database::getBooks().at(Database::getBookByID(id)) << cout; //Print recently borrowed book info
+			return;
+		}
+		else
+			cout << "Unfortunately, this book has already been borrowed. Please choose a different book." << endl;
+	}
+	else
+		cout << "You have reached your limit on books! Please return a book. " << endl;
+}
+
+void Student::returnBooks(istream& in) {
+	int id;
+	cout << "ID of book to return: "; //Input for desired book ID
+	in >> id;
+	if (Database::getBookByID(id) < 0) { //Check for invalid ID
+		cout << "Invalid ID. A book with that ID was not found." << endl;
+		return;
+	}
+	else {
+		Book* desired = &Database::getBooks().at(Database::getBookByID(id));
+		for (int i=0; i<borrowed.size(); i++)
+			if (borrowed.at(i).getID() == id) { //Check if the user has borrowed a book with the given ID
+				desired->setBorrower("none"); //Reset Book attributes
+				desired->setStartDate(0);
+				desired->setExpirationDate(0);
+				borrowed.erase(borrowed.begin() + i); //remove from borrowed list
+				Database::save(); //write back to database files
+				cout << endl << "Successfully returned Book #" << id << endl << endl << endl;
+				Database::getBooks().at(Database::getBookByID(id)) << cout; //Print recently returned book info
+				return;
+			}
+		cout << "Error. You have not borrowed a book with the ID #" << id << endl;
+	}
+}
+
+/*checks and issues penalties when they have overdue books*/
+void penalty(){
+
+}
+	

@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include "Book.h"
+#include "Date.h"
 using namespace std;
 
 class Student {
@@ -38,4 +39,8 @@ public:
 	ostream& operator<<(ostream& out) const;
 	istream& operator>>(istream& in);
 	bool operator==(Student& s) const;
+
+	//User Actions
+	void borrowBooks(istream& in);
+	void returnBooks(istream& in);
 };

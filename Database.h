@@ -13,7 +13,7 @@ private:
 public:
 	static vector<Student>& getStudents();
 	static vector<Book>& getBooks();
-	static Book* getBookByID(int id);
+	static int getBookByID(int id);
 	static bool loadBooks();
 	static bool loadStudents();
 	static void save();
