@@ -1,5 +1,5 @@
 #include "Date.h"
-#include <time.h>
+#include <ctime>
 #include <iostream>
 
 using namespace std;
@@ -7,11 +7,15 @@ using namespace std;
 
 int Date::getDays() 
 { 
-	clock_t start, end;
-	double x = 1.5;
+	clock_t time1 = clock();
+	double sum = 0;
+	for (int i = 0; i < 100000000; i++) {
+		sum += sqrt(i);
+	}
+	clock_t time2 = clock();
 
-	start = clock();
-	end = clock();
-	cout << "time generate" << (double)(end - start) / CLOCKS_PER_SEC << endl;
+	double t = ((double)(time2 - time1)) / CLOCKS_PER_SEC;
+	cout << "CLOCKS_PER_SEC: " << CLOCKS_PER_SEC << endl;
+	cout << "Process running time: " << t << "s" << endl;
 	return (clock() / CLOCKS_PER_SEC) / dayUnit; 
 }
