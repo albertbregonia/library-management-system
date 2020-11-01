@@ -5,8 +5,3 @@ C++ Library Management System for ESE224
  - Albert Bregonia
  - Xiangfeng Lin
  - Anthony Felicetta
-
-## To-Do:
- - a
- - b
- - c
