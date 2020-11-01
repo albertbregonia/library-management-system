@@ -1,5 +1,3 @@
-//Albert Bregonia 10/16
-
 #include <iostream>
 #include "Display.h"
 

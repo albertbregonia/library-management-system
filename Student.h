@@ -43,4 +43,5 @@ public:
 	//User Actions
 	void borrowBooks(istream& in);
 	void returnBooks(istream& in);
+	bool penalty();
 };

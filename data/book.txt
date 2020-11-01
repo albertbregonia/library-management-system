@@ -1,27 +1,27 @@
-12300000
-title
-author
-category
+978-1484249222
+C++17 Standard Library Quick Reference: A Pocket Guide to Data Structures, Algorithms, and Functions
+Peter Van Weert
+Engineering
 1
-borrowerName
-100
-1000
+none
+0
+0
 ----------------
-12003333
-Book1
+978-0321712592
+Physics for Scientists & Engineers with Modern Physics (4th Edition)
 Bregonia
-Engineering
+Science
 2
-admin
-2
-8
+none
+0
+0
 ----------------
-12003333
-Book1
-Bregonia
-Engineering
+978-1506696720
+Introduction to Linear Algebra: Models, Methods, and Theory
+Alan Tucker
+Math
 3
 none
-1
-7
+0
+0
 ----------------

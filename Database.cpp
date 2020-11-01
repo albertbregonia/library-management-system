@@ -1,5 +1,3 @@
-//Albert Bregonia 10/16
-
 #include <iostream>
 #include <fstream>
 #include "Database.h"
@@ -54,7 +52,7 @@ bool Database::loadStudents() {
 		while (!studentData.eof())
 			s >> studentData;
 	studentData.close();
-	return Database::getStudents().size()>0;
+	return Database::getStudents().size() > 0;
 }
 
 //Save current data into the databases 'book.txt' and 'student.txt'

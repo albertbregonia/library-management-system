@@ -1,12 +1,4 @@
-//Albert Bregonia 10/16
-
 //Main System Launcher for the LMS
-
-	/*To Do:
-	* Date Counter - currently simple implementation
-	* Borrow/Return Implementation
-	* Register - I'm not sure if we're allowed to do this?
-	*/
 
 #include <iostream>
 
@@ -104,9 +96,13 @@ void gui() {
 			changePassword();
 			Database::save();
 			break;
-		case 8:
+		case 8: //Debug Command, Prints Book Database and Student Database
+			cout << "========= Books =========" << endl;
 			for (Book b : Database::getBooks())
-				b << cout;
+				b << cout << endl;
+			cout << "========= Students =========" << endl;
+			for (Student s : Database::getStudents())
+				s << cout << endl;
 			break;
 		default: //Invalid Input
 			cout << "Invalid selection. Please enter a valid ID." << endl;

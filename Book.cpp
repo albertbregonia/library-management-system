@@ -1,5 +1,3 @@
-// Xiangfeng Lin for the cpp file 10/16
-
 #pragma once
 #include <iostream>
 #include "Book.h"
@@ -10,7 +8,7 @@ Book::Book():
 	ISBN("0"),
 	author("author"),
 	category("category"),
-	id(-10),
+	id(-2),
 	reader("none"),
 	start(0),
 	end(0) 
@@ -46,7 +44,7 @@ void Book::setStartDate(long start) {this->start = start;}
 void Book::setExpirationDate(long end) {this->end = end;}
 
 //Overloaded Operators
-ostream& Book::operator<<(ostream& out) const {  //show the information of the book
+ostream& Book::operator<<(ostream& out) const {
 	if (&out == &cout) { //Console Display
 		out << "ISBN: " << ISBN << endl;
 		out << "Title: " << title << endl;
@@ -71,6 +69,7 @@ ostream& Book::operator<<(ostream& out) const {  //show the information of the b
 	return out;
 }
 
+//Reads in a single book from a stream and adds it to the book database
 istream& Book::operator>>(istream& in) {
 	string line;
 	if(!in.eof())
