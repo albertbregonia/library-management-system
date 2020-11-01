@@ -6,6 +6,7 @@
 //Constructors
 Book::Book():
 	ISBN("0"),
+	title("title"),
 	author("author"),
 	category("category"),
 	id(-2),
@@ -15,6 +16,7 @@ Book::Book():
 {}
 Book::Book(string ISBN, string title, string author, string category, int id, string reader, long start, long end) :
 	ISBN(ISBN),
+	title(title),
 	author(author),
 	category(category),
 	id(id),
