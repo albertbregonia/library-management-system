@@ -6,7 +6,7 @@ using namespace std;
 //Display Welcome Message on Database
 void Display::welcome() {
 	border();
-	cout << "Welcome to the Library" << endl << endl;
+	cout << "\tWelcome to the Library" << endl << endl;
 	border();
 	cout << "What would you like to do?" << endl;
 	cout << "\t0 -- Sign Up" << endl;
