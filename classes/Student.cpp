@@ -8,14 +8,18 @@ Student::Student():
 	password("none"),
 	term(30), //by default max borrow period is <=30
 	max(5), //by default max 5 books can be borrowed
-	borrowed(vector<Book>())
+	borrowed(vector<Book>()),
+	penalties(0),
+	reserved(vector<Book>())
 {}
-Student::Student(string username, string password, int term, int max, vector<Book> borrowed):
+Student::Student(string username, string password, int term, int max, vector<Book> borrowed, vector<Book> reserved):
 	username(username),
 	password(password),
 	term(term),
 	max(max),
-	borrowed(borrowed)
+	borrowed(borrowed),
+	penalties(0),
+	reserved(reserved)
 {}
 //Accessors
 string Student::getUsername() { return username; }
@@ -23,13 +27,17 @@ string Student::getPassword() { return password; }
 int Student::getTerm() { return term; }
 int Student::getMaxCopies() { return max; }
 vector<Book> Student::getBorrowedBookList() { return borrowed; }
+vector<Book> Student::getReserved() { return reserved; }
+int Student::getPenalties() { return penalties; }
 
 //Mutators
 void Student::setUsername(string username) { this->username = username; }
 void Student::setPassword(string password) { this->password = password; }
 void Student::setTerm(int term) { this->term = term; }
 void Student::setMaxCopies(int max) { this->max = max; }
-void Student::setBorrowedBooks(vector<Book> borrowed) { this->borrowed = borrowed; }
+void Student::setBorrowed(vector<Book> borrowed) { this->borrowed = borrowed; }
+void Student::setPenalties(int penalties) { this->penalties = penalties; }
+void Student::setReserved(vector<Book> reserved) { this->reserved = reserved; }
 
 //Overloaded Operators
 ostream& Student::operator<<(ostream& out) const {
