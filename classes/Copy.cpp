@@ -57,7 +57,7 @@ ostream& Copy::operator<<(ostream& out){
 		out << "Expiration Date: " << end << endl;
 	}
 	else { //Write to File
-		out << id << endl;
+		out << endl << id << endl;
 		out << book.getISBN() << endl;
 		out << borrower << endl;
 		out << reserver << endl;

@@ -37,5 +37,9 @@ public:
 
 	//Readers may have penalties
 	bool penalty();
+
+	//Actions
+	void borrowBooks(istream& in);
+	void returnBooks(istream& in);
 };
 

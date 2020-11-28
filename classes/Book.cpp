@@ -7,7 +7,10 @@ Book::Book():
 	ISBN("0"),
 	title("title"),
 	author("author"),
-	category("category")	
+	category("category"),
+	index("Index0"),
+	count(1),
+	favor(0)
 {}
 Book::Book(string ISBN, string title, string author, string category, string index, int count, int favor) :
 	ISBN(ISBN),
@@ -44,12 +47,18 @@ ostream& Book::operator<<(ostream& out) const {
 		out << "Title: " << title << endl;
 		out << "Author: " << author << endl;
 		out << "Category: " << category << endl;
+		out << "Index: " << index << endl;
+		out << "Count: " << count << endl;
+		out << "Favor: " << favor << endl;
 	}
 	else { //Write to File
-		out << ISBN << endl;
+		out << endl << ISBN << endl;
 		out << title << endl;
 		out << author << endl;
 		out << category << endl;
+		out << index << endl;
+		out << count << endl;
+		out << favor << endl;
 		out << "----------------";
 	}
 	return out;
@@ -59,7 +68,7 @@ ostream& Book::operator<<(ostream& out) const {
 istream& Book::operator>>(istream& in) {
 	string line;
 	if(!in.eof())
-		for (int i = 0; i < 5; i++) {
+		for (int i = 0; i < 8; i++) {
 			getline(in, line);
 			if (line.empty())
 				break;
@@ -77,8 +86,16 @@ istream& Book::operator>>(istream& in) {
 					category = line;
 					break;
 				case 4:
+					index = line;
 					break;
-					//line delimiter
+				case 5:
+					count = stoi(line);
+					break;
+				case 6:
+					favor = stoi(line);
+					break;
+				case 7: //line delimiter
+					break;
 			}
 		}
 	return in;

@@ -8,8 +8,4 @@ public:
 	//Constructors
 	Student();
 	Student(string username, string password, int term, int max, vector<Copy> borrowed, vector<Copy> reserved);
-
-	//Student Actions
-	void borrowBooks(istream& in);
-	void returnBooks(istream& in);
 };

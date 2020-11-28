@@ -17,5 +17,8 @@ public:
 	//Mutators
 	void setUsername(string username);
 	void setPassword(string password);
+
+	ostream& operator<<(ostream& out);
+	istream& operator>>(istream& in);
 };
 

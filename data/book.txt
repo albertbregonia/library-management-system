@@ -1,15 +1,25 @@
+
 978-1484249222
 C++17 Standard Library Quick Reference: A Pocket Guide to Data Structures, Algorithms, and Functions
 Peter Van Weert
 Engineering
+Index1
+1
+5
 ----------------
 978-0321712592
 Physics for Scientists & Engineers with Modern Physics (4th Edition)
 Douglas C. Giancoli
 Science
+Index2
+2
+4
 ----------------
 978-1506696720
 Introduction to Linear Algebra: Models, Methods, and Theory
 Alan Tucker
 Math
+Index3
+3
+3
 ----------------

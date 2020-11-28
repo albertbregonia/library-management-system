@@ -8,9 +8,8 @@ void Display::welcome() {
 	border();
 	cout << "\tWelcome to the Library" << endl << endl;
 	border();
-	cout << "What would you like to do?" << endl;
-	cout << "\t0 -- Sign Up" << endl;
-	cout << "\t1 -- Login" << endl << endl;
+	cout << "Are you a student/teacher?: \n\t1 - Yes\n\t0 - No" << endl << endl;
+	cout << "Selection: ";
 }
 
 //Display Text Border
