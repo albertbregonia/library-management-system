@@ -8,13 +8,16 @@ Book::Book():
 	ISBN("0"),
 	title("title"),
 	author("author"),
-	category("category"),	
+	category("category")	
 {}
-Book::Book(string ISBN, string title, string author, string category) :
+Book::Book(string ISBN, string title, string author, string category, string index, int count, int favor) :
 	ISBN(ISBN),
 	title(title),
 	author(author),
 	category(category),
+	index(index),
+	count(count),
+	favor(favor)
 {}
 
 //Accessors
@@ -22,14 +25,18 @@ string Book::getISBN() {return ISBN;}
 string Book::getTitle() {return title;}
 string Book::getAuthor() {return author;}
 string Book::getCategory() {return category;}
-
+string Book::getIndex() { return index; }
+int Book::getCount() { return count; }
+int Book::getFavor() { return favor; }
 
 //Mutators
 void Book::setISBN(string ISBN) {this->ISBN = ISBN;}
 void Book::setTitle(string title) {this->title = title;}
 void Book::setAuthor(string author) {this->author = author;}
 void Book::setCategory(string category) {this->category = category;}
-
+void Book::setIndex(string i) { this->index = i; }
+void Book::setCount(int i) { this->count = i; }
+void Book::setFavor(int i) { this->favor = i; }
 
 //Overloaded Operators
 ostream& Book::operator<<(ostream& out) const {
@@ -38,20 +45,12 @@ ostream& Book::operator<<(ostream& out) const {
 		out << "Title: " << title << endl;
 		out << "Author: " << author << endl;
 		out << "Category: " << category << endl;
-		out << "ID: " << id << endl;
-		out << "Current Borrower: " << reader << endl;
-		out << "Start Date: " << start << endl;
-		out << "Expiration Date: " << end << endl;
 	}
 	else { //Write to File
 		out << ISBN << endl;
 		out << title << endl;
 		out << author << endl;
 		out << category << endl;
-		out << id << endl;
-		out << reader << endl;
-		out << start << endl;
-		out << end << endl;
 		out << "----------------" << endl;
 	}
 	return out;
@@ -61,7 +60,7 @@ ostream& Book::operator<<(ostream& out) const {
 istream& Book::operator>>(istream& in) {
 	string line;
 	if(!in.eof())
-		for (int i = 0; i < 9; i++) {
+		for (int i = 0; i < 5; i++) {
 			getline(in, line);
 			if (line.empty())
 				break;
@@ -78,20 +77,8 @@ istream& Book::operator>>(istream& in) {
 				case 3:
 					category = line;
 					break;
-				case 4:
-					id = stoi(line);
-					break;
-				case 5:
-					reader = line;
-					break;
-				case 6:
-					start = stol(line);
-					break;
-				case 7:
-					end = stol(line);
-					break;
-				case 8: //line delimiter
-					Database::getBooks().push_back(*this);
+				case 4: 
+					//line delimiter
 			}
 		}
 	return in;
