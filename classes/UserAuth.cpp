@@ -1,9 +1,4 @@
-#include <iostream>
-#include <istream>
-
-#include "Display.h"
 #include "UserAuth.h"
-#include "Student.h"
 #include "Database.h"
 
 using namespace std;
@@ -13,7 +8,7 @@ bool UserAuthentication::signup(istream &in) {
 	string user, pw;
 	cout << "Please enter your desired username: ";
 	in >> user;
-	for (Student s : Database::getReaders()) //Unique usernames are required
+	for (Reader s : Database::getReaders()) //Unique usernames are required
 		if (s.getUsername() == user)
 			return false;
 	cout << "Please enter your desired password: ";

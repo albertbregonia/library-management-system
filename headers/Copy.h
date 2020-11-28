@@ -1,9 +1,7 @@
-#include <string>
+#pragma once
 #include "Book.h"
-#include "Reader.h"
-using namespace std;
 
-class Copy : public Book {
+class Copy {
 private:
 	int id;
 	Book book;
@@ -36,4 +34,8 @@ public:
 	void setReserveDate(long res);
 	void setStartDate(long start);
 	void setExpirationDate(long end);
+
+	//Overloaded Operators
+	ostream& operator<<(ostream& out);
+	istream& operator>>(istream& in);
 };

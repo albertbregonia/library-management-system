@@ -1,6 +1,6 @@
+#include "Database.h"
 #include <iostream>
 #include <fstream>
-#include "Database.h"
 
 //Initialize Static Variables
 vector<Book> Database::books = vector<Book>();
@@ -26,11 +26,20 @@ vector<string> Database::split(string s) {
 	return v;
 }
 
-//Returns the int of the book in the database given an ID
-int Database::getBookByID(int id) {
+//Returns the index of the copy in the database given an ID
+int Database::getCopyByID(int id) {
 	int index = -1;
 	for (int i = 0; i < copies.size(); i++)
 		if (copies.at(i).getID() == id)
+			index = i;
+	return index;
+}
+
+//Returns the index of the book in the database given an ISBN
+int Database::getBookByISBN(string ISBN) {
+	int index = -1;
+	for (int i = 0; i < books.size(); i++)
+		if (books.at(i).getISBN() == ISBN)
 			index = i;
 	return index;
 }
@@ -41,26 +50,30 @@ bool Database::loadBooks() {
 	fstream bookData("data\\book.txt");
 	Book b = Book();
 	if (bookData.is_open())
-		while (!bookData.eof())
+		while (!bookData.eof()) {
 			b >> bookData;
+			books.push_back(b);
+		}
 	bookData.close();
 	//Load Copies
-	fstream bookData("data\\copies.txt");
-	Copy b = Copy();
-	if (bookData.is_open())
-		while (!bookData.eof())
-			b >> bookData;
-	bookData.close();
+	fstream copyData("data\\copy.txt");
+	Copy c = Copy();
+	if (copyData.is_open())
+		while (!copyData.eof()) {
+			c >> copyData;
+			copies.push_back(c);
+		}
+	copyData.close();
 	return Database::books.size() > 0 && Database::copies.size() > 0;
 }
 
 //Loads all the student accounts from the database file 'student.txt'
 bool Database::loadStudents() {
 	fstream studentData("data\\student.txt");
-	Student s = Student();
+	Reader r = Reader();
 	if (studentData.is_open())
 		while (!studentData.eof())
-			s >> studentData;
+			r >> studentData;
 	studentData.close();
 	return Database::getReaders().size() > 0;
 }
@@ -82,4 +95,5 @@ void Database::save() {
 		cout << "Error writing to database files! Please resolve this issue or contact a system administrator." << endl;
 	studentFile.close();
 	bookFile.close();
+	copyFile.close();
 }

@@ -1,7 +1,6 @@
 #pragma once
 #include <iostream>
 #include "Book.h"
-#include "Database.h"
 
 //Constructors
 Book::Book():
@@ -51,7 +50,7 @@ ostream& Book::operator<<(ostream& out) const {
 		out << title << endl;
 		out << author << endl;
 		out << category << endl;
-		out << "----------------" << endl;
+		out << "----------------";
 	}
 	return out;
 }
@@ -77,7 +76,8 @@ istream& Book::operator>>(istream& in) {
 				case 3:
 					category = line;
 					break;
-				case 4: 
+				case 4:
+					break;
 					//line delimiter
 			}
 		}

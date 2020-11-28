@@ -1,6 +1,7 @@
 //Main System Launcher for the LMS
 
 #include <iostream>
+#include <fstream>
 
 #include "Display.h"
 #include "UserAuth.h"
@@ -25,12 +26,31 @@ int main() {
 	return 0;
 }
 
+void printBooks() {
+	fstream ya("data\\ya.txt");
+	for (Book b : Database::getBooks()) {
+		b << cout << endl;
+		b << ya << endl;
+	}
+	cout << "\n\n\n\n";
+	ya << "\n\n\n\n";
+	for (Copy c : Database::getCopies()) {
+		c << cout << endl;
+		c << ya << endl;
+	}
+	cout << "\n\n\n\n";
+	ya << "\n\n\n\n";
+	ya.close();
+}
+
 //Load into RAM the book/student data upon failure, the system aborts
 void startup() {
 	if (!Database::loadBooks())
 		exit(-3);
-	else if (!Database::loadStudents())
+	printBooks();
+	if (!Database::loadStudents())
 		exit(-4);
+	exit(4173);
 }
 
 //Welcome and Login Menu
@@ -78,10 +98,10 @@ void gui() {
 			cout << "To be implemeneted" << endl;
 			break;
 		case 2: //Borrow Books - Submission 1
-			Database::getStudents().at(current).borrowBooks(cin);
+			//Database::getReaders().at(current).borrowBooks(cin);
 			break;
 		case 3: //Return Books - Submission 1
-			Database::getStudents().at(current).returnBooks(cin);
+			//Database::getReaders().at(current).returnBooks(cin);
 			break;
 		case 4: //Reserve Books
 			cout << "To be implemeneted" << endl;
@@ -90,7 +110,7 @@ void gui() {
 			cout << "To be implemeneted" << endl;
 			break;
 		case 6: //About Me
-			Database::getStudents().at(current) << cout;
+			Database::getReaders().at(current) << cout;
 			break;
 		case 7: //Change Password
 			changePassword();
@@ -101,7 +121,7 @@ void gui() {
 			for (Book b : Database::getBooks())
 				b << cout << endl;
 			cout << "========= Students =========" << endl;
-			for (Student s : Database::getStudents())
+			for (Reader s : Database::getReaders())
 				s << cout << endl;
 			break;
 		default: //Invalid Input
@@ -126,12 +146,12 @@ void changePassword() {
 	string pw;
 	cout << "Enter your current password: ";
 	cin >> pw;
-	if (pw == Database::getStudents().at(current).getPassword()) {
+	if (pw == Database::getReaders().at(current).getPassword()) {
 		cout << "Enter your new desired password: ";
 		cin >> pw;
-		for (Student s : Database::getStudents()) //change in the database as well as the current session
-			if (s == Database::getStudents().at(current))
-				Database::getStudents().at(current).setPassword(pw);
+		for (Reader s : Database::getReaders()) //change in the database as well as the current session
+			if (s == Database::getReaders().at(current))
+				Database::getReaders().at(current).setPassword(pw);
 		cout << "Change successful." << endl;
 	}
 	else
