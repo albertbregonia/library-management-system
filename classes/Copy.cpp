@@ -7,18 +7,18 @@ Copy::Copy() :
 	id(-2),
 	book(NULL),
 	borrower("none"),
-	reserver("none"),
+	reservers(vector<string>()),
 	available(true),
 	reserveDate(0),
 	start(0),
 	end(0)
 {}
 
-Copy::Copy(int id, Book* book, string borrower, string reserver, bool available, long res, long start, long end) :
+Copy::Copy(int id, Book* book, string borrower, vector<string> reservers, bool available, long res, long start, long end) :
 	id(id),
 	book(book),
 	borrower(borrower),
-	reserver(reserver),
+	reservers(reservers),
 	available(available),
 	reserveDate(res),
 	start(start),
@@ -29,7 +29,7 @@ Copy::Copy(int id, Book* book, string borrower, string reserver, bool available,
 int Copy::getID() { return id; }
 Book* Copy::getBook() { return book; }
 string Copy::getBorrower() { return borrower; }
-string Copy::getReserver() { return reserver; }
+vector<string>& Copy::getReservers() { return reservers; }
 bool Copy::getAvailability() { return available; }
 long Copy::getReserveDate() { return reserveDate; }
 long Copy::getStartDate() { return start; }
@@ -39,18 +39,24 @@ long Copy::getExpirationDate() { return end; }
 void Copy::setID(int id) { this->id = id; }
 void Copy::setBorrower(string borrower) { this->borrower = borrower; }
 void Copy::setAvailability(bool available) { this->available = available; }
-void Copy::setReserver(string reserver) { this->reserver = reserver; }
+void Copy::setReservers(vector<string> reservers) { this->reservers = reservers; }
 void Copy::setReserveDate(long res) { this->reserveDate = res; }
 void Copy::setStartDate(long start) { this->start = start; }
 void Copy::setExpirationDate(long end) { this->end = end; }
 
 //Overloaded Operators
 ostream& Copy::operator<<(ostream& out){
+	string res;
+	if (reservers.empty())
+		res = "none";
+	else
+		for (string u : reservers)
+			res += u + " ";
 	if (&out == &cout) { //Console Display
 		out << "ID: " << id << endl;
 		out << "Book (ISBN): " << book->getISBN() << endl;
 		out << "Borrower: " << borrower << endl;
-		out << "Reserver: " << reserver << endl;
+		out << "Reservers: " << res << endl;
 		out << "Available: " << available << endl;
 		out << "Reserve Date: " << reserveDate << endl;
 		out << "Borrow Date: " << start << endl;
@@ -60,7 +66,7 @@ ostream& Copy::operator<<(ostream& out){
 		out << endl << id << endl;
 		out << book->getISBN() << endl;
 		out << borrower << endl;
-		out << reserver << endl;
+		out << res << endl;
 		out << available << endl;
 		out << reserveDate << endl;
 		out << start << endl;
@@ -89,7 +95,10 @@ istream& Copy::operator>>(istream& in) {
 				borrower = line;
 				break;
 			case 3:
-				reserver = line;
+				reservers.clear();
+				for (string username : Database::split(line))
+					if (username != "none")
+						reservers.push_back(username);
 				break;
 			case 4:
 				available = stoi(line);

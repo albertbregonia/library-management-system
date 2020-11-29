@@ -36,7 +36,8 @@ public:
 	bool operator==(Reader& r);
 
 	//Readers may have penalties
-	bool penalty();
+	bool isOverdue(Copy* c);
+	bool anyOverdue();
 
 	//Actions
 	void borrowBooks(istream& in);

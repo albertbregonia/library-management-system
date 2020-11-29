@@ -107,20 +107,21 @@ void Database::searchBooks(istream& in) {
 	Display::border();
 
 	//Search
-	string isbn, title, author, category;
+	string key;
+	vector<totalBookInfo> popularity;
 	bool found = false;
 	switch (choice) {
 	case 0: //ISBN Search
 		cout << "Enter an ISBN to search for: ";
-		in >> isbn;
+		in >> key;
 		cout << endl;
 		Display::border();
 		for (Book b : Database::getBooks())
-			if (b.getISBN() == isbn) { //Find book with ISBN
+			if (b.getISBN() == key) { //Find book with ISBN
 				b << cout; //Print Book Info
 				cout << "***IDs: ";
 				for (Copy c : Database::getCopies()) //Find all IDs of that Book
-					if (c.getBook()->getISBN() == isbn)
+					if (c.getBook()->getISBN() == key)
 						cout << c.getID() << " ";
 				cout << endl << endl;
 				return; //There is only 1 ISBN per book
@@ -129,13 +130,13 @@ void Database::searchBooks(istream& in) {
 		break;
 	case 1: //Title Search
 		cout << "Enter a title to search for: ";
-		getline(in >> ws, title); // 'in >> ws' is used to include whitespace
-		title = toLower(title); //Converted to lowercase to ignore capitals
+		getline(in >> ws, key); // 'in >> ws' is used to include whitespace
+		key = toLower(key); //Converted to lowercase to ignore capitals
 		cout << endl;
 		Display::border();
 		for (Book b : Database::getBooks())
-			if (toLower(b.getTitle()).find(title) != string::npos) { //Find book with title or string in title
-				if (!found)
+			if (toLower(b.getTitle()).find(key) != string::npos) { //Find book with title or string in title
+				if (!found) //At least 1 result
 					found = true;
 				b << cout; //Print Book Info
 				string t = b.getTitle();
@@ -149,14 +150,85 @@ void Database::searchBooks(istream& in) {
 			cout << "No Results." << endl;
 		break;
 	case 2: //Author Based Search
+		cout << "Enter an author to search for: ";
+		getline(in >> ws, key);
+		key = toLower(key);
+		cout << endl;
+		Display::border();
+		for (Book b : Database::getBooks())
+			if (toLower(b.getAuthor()).find(key) != string::npos) { //Find book with title or string in title
+				if (!found) //At least 1 result
+					found = true;
+				totalBookInfo temp; //Save Book, IDs and Reserve Count for each copy
+				temp.book = b;
+				string t = b.getTitle();
+				temp.ids = "***IDs: ";
+				for (Copy c : Database::getCopies()) //Find all IDs of that Book
+					if (c.getBook()->getTitle() == t) {
+						temp.ids += to_string(c.getID());
+						temp.ids += " ";
+						temp.numReserves += c.getReservers().size();
+					}
+				popularity.push_back(temp); //Add to list of books to sort based on popularity
+			}
+		if (found){
+			sort(popularity); //selection sort based on number of reserves
+			for (totalBookInfo i : popularity) //Print books
+				i.book << cout << i.ids << endl << endl;
+		}
+		else
+			cout << "No Results." << endl;
 		break;
 	case 3: //Category Based Search
+		cout << "Enter a category to search for: ";
+		getline(in >> ws, key);
+		key = toLower(key);
+		cout << endl;
+		Display::border();
+		for (Book b : Database::getBooks())
+			if (toLower(b.getCategory()).find(key) != string::npos) { //Find book with title or string in title
+				if (!found) //At least 1 result
+					found = true;
+				totalBookInfo temp; //Save Book, IDs and Reserve Count for each copy
+				temp.book = b;
+				string t = b.getTitle();
+				temp.ids = "***IDs: ";
+				for (Copy c : Database::getCopies()) //Find all IDs of that Book
+					if (c.getBook()->getTitle() == t) {
+						temp.ids += to_string(c.getID());
+						temp.ids += " ";
+						temp.numReserves += c.getReservers().size();
+					}
+				popularity.push_back(temp); //Add to list of books to sort based on popularity
+			}
+		if (found) {
+			sort(popularity); //selection sort based on number of reserves
+			for (totalBookInfo i : popularity) //Print books
+				i.book << cout << i.ids << endl << endl;
+		}
+		else
+			cout << "No Results." << endl;
 		break;
 	default: //Invalid Inputs
 		cout << "Invalid Input." << endl;
 		Display::border();
 		break;
 	}
+}
+
+//Option 7 - Change Password
+void Database::changePassword(istream& in, User& u) {
+	string current;
+	cout << "Please input your current password: ";
+	in >> current;
+	if (current == u.getPassword()) {
+		cout << "Verification Successful. Please enter in your new desired password: ";
+		cin >> current;
+		u.setPassword(current);
+		cout << "Updated Password Successfully." << endl;
+	}
+	else
+		cout << "Verification Failed. Unable to change password." << endl;
 }
 
 //============ UTILITY FUNCTIONS ============// 
@@ -168,6 +240,8 @@ vector<string> Database::split(string s) {
 	string temp("");
 	for (char c : s)
 		if (c == 32 || c == s[s.length() - 1]) {
+			if (c == s[s.length() - 1] && c > 32)
+				temp += c;
 			if (!temp.empty())
 				v.push_back(temp);
 			temp = "";
@@ -201,4 +275,15 @@ string Database::toLower(string s) {
 	for (char c : s)
 		temp += tolower(c);
 	return temp;
+}
+
+//Selection sort based on popularity
+void Database::sort(vector<totalBookInfo>& v) {
+	for (int i = 0; i < v.size() - 1; i++) {
+		int index = i;
+		for (int k = i + 1; k < v.size(); k++)
+			if (v[k].numReserves > v[index].numReserves)
+				index = k;
+		swap(v[i], v[index]);
+	}
 }

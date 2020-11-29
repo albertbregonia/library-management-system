@@ -100,24 +100,30 @@ ostream& Reader::operator<<(ostream& out) {
 
 bool Reader::operator==(Reader& r) { return getUsername() == r.getUsername() && getPassword() == r.getPassword(); }
 
-//Checks and issues a penalty when they have overdue books
-bool Reader::penalty() {
+//Checks for overdue books yet no penalty is issued
+bool Reader::anyOverdue() {
 	for (Copy c : borrowed)
 		if (Date::getDays() > c.getExpirationDate()) {
 			cout << "You have overdue book(s). You will not be allowed to borrow any more books." << endl;
-			penalties++; //Increase # of penalties
-			/*
-			* if(penalty==5)
-			*	max--;
-			*/
 			return true;
 		}
 	return false;
 }
 
+//Checks if a specific copy is overdue
+bool Reader::isOverdue(Copy* c) {
+	if (Date::getDays() > c->getExpirationDate()) {
+		penalties++; //increase penalty if overdue
+		if (penalties % 5 == 0 && penalties > 5) //penalties>5 and if penalties is a multiple of 5 decrease max #
+			max--;
+		return true;
+	}
+	return false;
+}
+
 //Option 2 - Boorow Books
 void Reader::borrowBooks(istream& in) {
-	if (penalty()) //Check for penalty
+	if (anyOverdue()) //Check for penalty
 		return;
 	if (getMaxCopies() > getBorrowedBookList().size()) { //Check if they haven't checked out more than their maximum
 		int id;
@@ -128,7 +134,7 @@ void Reader::borrowBooks(istream& in) {
 			return;
 		}
 		Copy* desired = &Database::getCopies().at(Database::getCopyByID(id)); //A pointer is used here to modify the value directly in the database instead of a copy of the value
-		if (desired->getBorrower() == "none") { //If nobody has borrowed the book, set the book's information to that of the borrower
+		if (desired->getBorrower() == "none" && desired->getReservers().empty()) { //If nobody has borrowed the book, set the book's information to that of the borrower
 			desired->setBorrower(getUsername());
 			desired->setStartDate(Date::getDays()); //set start period to current date
 			desired->setExpirationDate(Date::getDays() + 30); //30 days from current date is the expiration
@@ -149,7 +155,6 @@ void Reader::borrowBooks(istream& in) {
 
 //Option 3 - Return Books
 void Reader::returnBooks(istream& in) {
-	penalty(); //Check for penalty and issue penalty if a book is overdue
 	int id;
 	cout << "ID of book to return: "; //Input for desired book ID
 	in >> id;
@@ -161,16 +166,18 @@ void Reader::returnBooks(istream& in) {
 		Copy* desired = &Database::getCopies().at(Database::getCopyByID(id)); //A pointer is used here to modify the value directly in the database instead of a copy of the value
 		for (int i = 0; i < getBorrowedBookList().size(); i++)
 			if (getBorrowedBookList().at(i).getID() == id) { //Check if the user has borrowed a book with the given ID
+				isOverdue(desired); //Check for penalty and issue penalty if a book is overdue
 				//Reset Book attributes
 				desired->setBorrower("none");
 				desired->setStartDate(0);
 				desired->setExpirationDate(0);
+				desired->setAvailability(true);
 				getBorrowedBookList().erase(getBorrowedBookList().begin() + i); //remove from borrowed list
 				Database::save(); //write back to database files
 				cout << endl << "Successfully returned Book #" << id << endl << endl << endl;
 				Database::getCopies().at(Database::getCopyByID(id)) << cout; //Print recently returned book info
 				return;
 			}
-		cout << "Error. You have not borrowed a book with the ID #" << id << endl;
+		cout << "Error. You have not borrowed a book with the ID #" << id << "or that ID does not exist within our database." << endl;
 	}
 }

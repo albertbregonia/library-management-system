@@ -15,6 +15,12 @@ private:
 	static vector<Librarian> admins; //Administrative Accounts
 	static vector<Book> books; //Types of Books
 	static vector<Copy> copies; //Virtual Books
+	//Defined to Sort Books based on popularity
+	struct totalBookInfo {
+		Book book = Book();
+		string ids = "";
+		int numReserves = 0;
+	};
 public:
 	//Accessors
 	static vector<Reader>& getReaders();
@@ -27,10 +33,14 @@ public:
 	static int getBookByISBN(string ISBN);
 	static vector<string> split(string s);
 	static string toLower(string s);
+	static void sort(vector<totalBookInfo>& v);
 
 	//Traverse Database
-	static void searchBooks(istream& in);
 	static bool loadBooks();
 	static bool loadAccounts();
 	static void save();
+
+	//User Actions
+	static void searchBooks(istream& in);
+	static void changePassword(istream& in, User& u);
 };

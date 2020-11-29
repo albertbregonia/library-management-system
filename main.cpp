@@ -47,6 +47,8 @@ void startup() {
 		exit(-3);
 	else if (!Database::loadAccounts())
 		exit(-4);
+	//printBooks();
+	//printAccounts();
 }
 
 //Welcome and Login Menu
@@ -104,27 +106,29 @@ void gui(bool type) {
 				cout << "To be Implemeneted" << endl;
 			break;
 		case 6: 
-			if (type) //About Me for Student/Teacher
-				Database::getReaders().at(current) << cout;
+			if (type) //Renew Books for Student/Teacher
+				cout << "To be Implemeneted" << endl;
 			else
 				cout << "To Be Implemented" << endl; //Delete Users
 			break;
 		case 7:
 			if(type) //About Me for Admin
+				Database::getReaders().at(current) << cout;
+			else
 				Database::getAdmins().at(current) << cout;
-			else //Change Password for Student/Teacher
-				Database::save();
 			break;
 		case 8:
-			if (!type) { //Change Password for Admin
-				cout << "To Be Implemented" << endl;
-				break;
-			}
+			if (type) //Change Password for Student/Teacher
+				Database::changePassword(cin, Database::getReaders().at(current));
+			else //Change Password for Admin
+				Database::changePassword(cin, Database::getAdmins().at(current));
+			break;
 		default: //Invalid Input
 			cout << "Invalid selection. Please enter a valid ID." << endl;
 		}
 		Display::menu(type);
 		Display::clrscr();
+		cout << "Time is currently: " << Date::getDays() << endl;
 		cout << "Choice: ";
 		cin >> choice;
 		cout << endl << endl;
