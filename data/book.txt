@@ -23,3 +23,11 @@ Index3
 3
 3
 ----------------
+978-0201309652
+C++ solutions: companion to Stroustrup's book C++ programming language
+David Vandevoorde
+Engineering
+Index4
+4
+5
+----------------
