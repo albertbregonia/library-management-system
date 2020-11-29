@@ -1,5 +1,6 @@
 #include "UserAuth.h"
 #include "Database.h"
+#include <conio.h>
 
 using namespace std;
 
@@ -27,7 +28,11 @@ int UserAuthentication::login(istream &in, bool type) {
 	cout << "Please enter your username: ";
 	in >> user;
 	cout << "Please enter your password: ";
-	in >> pw;
+	char c;
+	while ((c=_getch()) != '\r'){ //using <conio.h> and C functions, treat 'pw' like a vector and put '*' per character
+		pw.push_back(c); //check until 'c' is the return key or '\r' (basically when you press enter)
+		cout << "*";
+	}
 	if (type) {
 		for (int i = 0; i < Database::getReaders().size(); i++)
 			if (Database::getReaders().at(i).getUsername() == user && Database::getReaders().at(i).getPassword() == pw)

@@ -5,7 +5,7 @@
 //Constructors
 Copy::Copy() :
 	id(-2),
-	book(Book()),
+	book(NULL),
 	borrower("none"),
 	reserver("none"),
 	available(true),
@@ -14,7 +14,7 @@ Copy::Copy() :
 	end(0)
 {}
 
-Copy::Copy(int id, Book book, string borrower, string reserver, bool available, long res, long start, long end) :
+Copy::Copy(int id, Book* book, string borrower, string reserver, bool available, long res, long start, long end) :
 	id(id),
 	book(book),
 	borrower(borrower),
@@ -27,7 +27,7 @@ Copy::Copy(int id, Book book, string borrower, string reserver, bool available, 
 
 //Accessors
 int Copy::getID() { return id; }
-Book Copy::getBook() { return book; }
+Book* Copy::getBook() { return book; }
 string Copy::getBorrower() { return borrower; }
 string Copy::getReserver() { return reserver; }
 bool Copy::getAvailability() { return available; }
@@ -48,7 +48,7 @@ void Copy::setExpirationDate(long end) { this->end = end; }
 ostream& Copy::operator<<(ostream& out){
 	if (&out == &cout) { //Console Display
 		out << "ID: " << id << endl;
-		out << "Book (ISBN): " << book.getISBN() << endl;
+		out << "Book (ISBN): " << book->getISBN() << endl;
 		out << "Borrower: " << borrower << endl;
 		out << "Reserver: " << reserver << endl;
 		out << "Available: " << available << endl;
@@ -58,7 +58,7 @@ ostream& Copy::operator<<(ostream& out){
 	}
 	else { //Write to File
 		out << endl << id << endl;
-		out << book.getISBN() << endl;
+		out << book->getISBN() << endl;
 		out << borrower << endl;
 		out << reserver << endl;
 		out << available << endl;
@@ -83,7 +83,7 @@ istream& Copy::operator>>(istream& in) {
 				id = stoi(line);
 				break;
 			case 1:
-				book = Database::getBooks().at(Database::getBookByISBN(line));
+				book = &Database::getBooks().at(Database::getBookByISBN(line));
 				break;
 			case 2:
 				borrower = line;

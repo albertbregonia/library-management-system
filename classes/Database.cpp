@@ -14,51 +14,15 @@ vector<Book>& Database::getBooks() { return books; }
 vector<Copy>& Database::getCopies() { return copies; }
 vector<Librarian>& Database::getAdmins() { return admins; }
 
-//splits a string delimited by spaces and returns a vector<string> with data given from said string
-vector<string> Database::split(string s) {
-	vector<string> v;
-	string temp("");
-	for (char c : s)
-		if (c == 32 || c == s[s.length()-1]) {
-			if(!temp.empty())
-				v.push_back(temp);
-			temp = "";
-		}
-		else
-			temp += c;
-	return v;
-}
-
-//============ UTILITY FUNCTIONS ============// 
-//- they allow for searching through the database
-
-//Returns the index of the copy in the database given an ID
-int Database::getCopyByID(int id) {
-	int index = -1;
-	for (int i = 0; i < copies.size(); i++)
-		if (copies.at(i).getID() == id)
-			index = i;
-	return index;
-}
-
-//Returns the index of the book in the database given an ISBN
-int Database::getBookByISBN(string ISBN) {
-	int index = -1;
-	for (int i = 0; i < books.size(); i++)
-		if (books.at(i).getISBN() == ISBN)
-			index = i;
-	return index;
-}
-
-//Loads all the books from the database file 'book.txt' and 'copies.txt'
-bool Database::loadBooks() {
+//Startup
+bool Database::loadBooks() { //Loads all the books from the database file 'book.txt' and 'copies.txt'
 	//Load Types of Books
 	fstream bookData("data\\book.txt");
 	Book b = Book();
 	if (bookData.is_open())
 		while (!bookData.eof()) {
 			b >> bookData;
-			if(b.getTitle()!="title") //ensure a real 'book' is read in
+			if (b.getTitle() != "title") //ensure a real 'book' is read in
 				books.push_back(b);
 		}
 	bookData.close();
@@ -68,16 +32,16 @@ bool Database::loadBooks() {
 	if (copyData.is_open())
 		while (!copyData.eof()) {
 			c >> copyData;
-			if(c.getID()!=-2) //ensure a real 'copy' is read in
+			if (c.getID() != -2) //ensure a real 'copy' is read in
 				copies.push_back(c);
 		}
 	copyData.close();
 	return Database::books.size() > 0 && Database::copies.size() > 0;
 }
 
-//Loads all the accounts from the database file 'reader.txt'
-//- this was changed from 'student.txt' to incorporate teachers as well
 bool Database::loadAccounts() {
+	//Loads all the accounts from the database file 'reader.txt'
+	//- this was changed from 'student.txt' to incorporate teachers as well
 	fstream readerFile("data\\reader.txt");
 	fstream adminFile("data\\admin.txt");
 	Reader r = Reader();
@@ -85,7 +49,7 @@ bool Database::loadAccounts() {
 	if (readerFile.is_open() && adminFile.is_open()) {
 		while (!readerFile.eof()) { //load in readers
 			r >> readerFile;
-			if(r.getUsername()!="none") //ensure a real user is read in
+			if (r.getUsername() != "none") //ensure a real user is read in
 				readers.push_back(r);
 		}
 		while (!adminFile.eof()) { //load in admins
@@ -99,8 +63,8 @@ bool Database::loadAccounts() {
 	return readers.size() > 0 && admins.size() > 0;
 }
 
-//Save current data into the databases 'book.txt' and 'student.txt'
 void Database::save() {
+	//Save current data into the databases
 	ofstream readerFile("data\\reader.txt");
 	ofstream bookFile("data\\book.txt");
 	ofstream copyFile("data\\copy.txt");
@@ -123,4 +87,40 @@ void Database::save() {
 	bookFile.close();
 	copyFile.close();
 	libFile.close();
+}
+
+//============ UTILITY FUNCTIONS ============// 
+//- they allow for searching through the database
+
+//splits a string delimited by spaces and returns a vector<string> with data given from said string
+vector<string> Database::split(string s) {
+	vector<string> v;
+	string temp("");
+	for (char c : s)
+		if (c == 32 || c == s[s.length() - 1]) {
+			if (!temp.empty())
+				v.push_back(temp);
+			temp = "";
+		}
+		else
+			temp += c;
+	return v;
+}
+
+//Returns the index of the copy in the database given an ID
+int Database::getCopyByID(int id) {
+	int index = -1;
+	for (int i = 0; i < copies.size(); i++)
+		if (copies.at(i).getID() == id)
+			index = i;
+	return index;
+}
+
+//Returns the index of the book in the database given an ISBN
+int Database::getBookByISBN(string ISBN) {
+	int index = -1;
+	for (int i = 0; i < books.size(); i++)
+		if (books.at(i).getISBN() == ISBN)
+			index = i;
+	return index;
 }

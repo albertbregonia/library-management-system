@@ -4,7 +4,7 @@
 class Copy {
 private:
 	int id;
-	Book book;
+	Book* book;
 	string borrower; //Current Borrower - SAVED AS USERNAME
 	string reserver; //Current Reserver - SAVED AS USERNAME
 	bool available;
@@ -14,11 +14,11 @@ private:
 public:
 	//Default Constructor
 	Copy();
-	Copy(int id, Book book, string borrower, string reserver, bool available, long res, long start, long end);
+	Copy(int id, Book* book, string borrower, string reserver, bool available, long res, long start, long end);
 	
 	//Accessors
 	int getID();
-	Book getBook();
+	Book* getBook();
 	string getBorrower(); 
 	string getReserver();
 	bool getAvailability();

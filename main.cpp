@@ -47,8 +47,6 @@ void startup() {
 		exit(-3);
 	else if (!Database::loadAccounts())
 		exit(-4);
-	printBooks();
-	printAccounts();
 }
 
 //Welcome and Login Menu
@@ -79,7 +77,7 @@ void gui() {
 		Display::border();
 		switch (choice) {
 		case 1: //Search for Books
-			cout << "To be implemeneted" << endl;
+			Database::getReaders().at(current).searchBooks(cin);
 			break;
 		case 2: //Borrow Books - Submission 1
 			Database::getReaders().at(current).borrowBooks(cin);
