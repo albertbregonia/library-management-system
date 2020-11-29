@@ -100,6 +100,14 @@ ostream& Reader::operator<<(ostream& out) {
 
 bool Reader::operator==(Reader& r) { return getUsername() == r.getUsername() && getPassword() == r.getPassword(); }
 
+//Converts strings to lowercase
+static string toLower(string s) {
+	string temp = "";
+	for (char c : s)
+		temp += tolower(c);
+	return temp;
+}
+
 //Checks and issues a penalty when they have overdue books
 bool Reader::penalty() {
 	for (Copy c : borrowed)
@@ -149,10 +157,11 @@ void Reader::searchBooks(istream& in) {
 	case 1: //Title Search
 		cout << "Enter a title to search for: ";
 		cin >> title;
+		title = toLower(title); //Converted to lowercase to ignore capitals
 		cout << endl;
 		Display::border();
 		for (Book b : Database::getBooks())
-			if (b.getTitle().find(title) != string::npos) { //Find book with title or string in title
+			if (toLower(b.getTitle()).find(title) != string::npos) { //Find book with title or string in title
 				b << cout; //Print Book Info
 				string t = b.getTitle();
 				cout << "***IDs: ";
