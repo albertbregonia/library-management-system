@@ -69,7 +69,7 @@ istream& Book::operator>>(istream& in) {
 	string line;
 	if(!in.eof())
 		for (int i = 0; i < 8; i++) {
-			getline(in, line);
+			getline(in>>ws, line);
 			if (line.empty())
 				break;
 			switch (i) {
