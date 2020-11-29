@@ -19,24 +19,10 @@ void Librarian::delet_user(User* U, Reader* r) {
     }
     if (flag) //user exist
     {
-        for (int j = find; j < Reader::Reader_Number; j++)
-        {
-            if (j == Reader::/*Reader_Number*/ - 1) {
-                Reader::/*Reader_Number--*/;
-                break;
-            }
-            R[j] = R[j + 1];
+        for (int i = 0; i < Reader::reader_number; i++) {
+            Database::getReaders().erase(Database::getReaders().begin() + i);
+            cout << "delete successfully！" << endl;
         }
-        for (int j = 0; j < U->/*user number*/; j++)
-        {
-            if (U[j].getUsername() == a) { find1 = j; break; }
-        }
-        for (int j = find1; j < U->User_Number; j++)
-        {
-            if (j == U->User_Number - 1) { U->User_Number--; break; }
-            U[j] = U[j + 1];
-        }
-        cout << "delete successfully！" << endl;
     }
     else    cout << "The user don't exist！" << endl;
 }
