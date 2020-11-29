@@ -31,7 +31,7 @@ void startup();
 void start();
 
 //UI
-void gui();
+void gui(bool type);
 int current = -1; //Index of current student in the database, if successful this value is > 0
 
 //Runner
@@ -61,15 +61,15 @@ void start() {
 		cerr << "Invalid Username and/or Password. Please try again." << endl << endl;
 		Display::border();
 	}
-	gui(); //Load successful login menu
+	gui(type); //Load successful login menu
 }
 
-void gui() {
+void gui(bool type) {
 	Display::clrscr();
 	Display::border();
 	cout << "You have successfully logged into the Library Management System." << endl;
 	int choice = 0;
-	Display::menu();
+	Display::menu(type);
 	Display::clrscr();
 	cout << "Choice: ";
 	cin >> choice;
@@ -77,30 +77,53 @@ void gui() {
 		Display::border();
 		switch (choice) {
 		case 1: //Search for Books
-			Database::getReaders().at(current).searchBooks(cin);
+			Database::searchBooks(cin);
 			break;
-		case 2: //Borrow Books - Submission 1
-			Database::getReaders().at(current).borrowBooks(cin);
+		case 2:
+			if (type)  //Borrow Books
+				Database::getReaders().at(current).borrowBooks(cin);
+			else //Add Books for Admin
+				cout << "To Be Implemented" << endl; 
 			break;
-		case 3: //Return Books - Submission 1
-			Database::getReaders().at(current).returnBooks(cin);
+		case 3: 
+			if (type) //Return Books
+				Database::getReaders().at(current).returnBooks(cin);
+			else //Delete Books for Admin
+				cout << "To Be Implemenented" << endl; 
 			break;
-		case 4: //Reserve Books
-			cout << "To be implemeneted" << endl;
+		case 4: 
+			if(type) //Reserve Books for Student/Teacher
+				cout << "To Be Implemenented" << endl;
+			else //Search Users for Admin
+				cout << "To Be Implemenented" << endl;
 			break;
-		case 5: //Cancel Reservations
-			cout << "To be implemeneted" << endl;
+		case 5: 
+			if(type) //Cancel Reservations for Student/Teacher
+				cout << "To be Implemeneted" << endl;
+			else //Add Users for Admin
+				cout << "To be Implemeneted" << endl;
 			break;
-		case 6: //About Me
-			Database::getReaders().at(current) << cout;
+		case 6: 
+			if (type) //About Me for Student/Teacher
+				Database::getReaders().at(current) << cout;
+			else
+				cout << "To Be Implemented" << endl; //Delete Users
 			break;
-		case 7: //Change Password
-			Database::save();
+		case 7:
+			if(type) //About Me for Admin
+				Database::getAdmins().at(current) << cout;
+			else //Change Password for Student/Teacher
+				Database::save();
 			break;
+		case 8:
+			if (!type) { //Change Password for Admin
+				cout << "To Be Implemented" << endl;
+				break;
+			}
 		default: //Invalid Input
 			cout << "Invalid selection. Please enter a valid ID." << endl;
 		}
-		Display::menu();
+		Display::menu(type);
 		Display::clrscr();
 		cout << "Choice: ";
 		cin >> choice;

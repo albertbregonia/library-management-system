@@ -1,5 +1,7 @@
 #include "Database.h"
+#include "Display.h"
 #include <iostream>
+#include <string>
 #include <fstream>
 
 //Initialize Static Variables
@@ -89,6 +91,74 @@ void Database::save() {
 	libFile.close();
 }
 
+//============ FUNCTIONS ALL USERS CAN DO ============// 
+
+//Option 1 - WIP
+void Database::searchBooks(istream& in) {
+	//User Input To Search By Selected Key
+	int choice;
+	cout << "Search By: " << endl;
+	string keys[] = { "ISBN", "Title", "Author", "Category" };
+	for (int i = 0; i < 4; i++)
+		cout << "\t " << i << " - " << keys[i] << endl;
+	cout << endl << "Selection: ";
+	in >> choice;
+	cout << endl;
+	Display::border();
+
+	//Search
+	string isbn, title, author, category;
+	bool found = false;
+	switch (choice) {
+	case 0: //ISBN Search
+		cout << "Enter an ISBN to search for: ";
+		in >> isbn;
+		cout << endl;
+		Display::border();
+		for (Book b : Database::getBooks())
+			if (b.getISBN() == isbn) { //Find book with ISBN
+				b << cout; //Print Book Info
+				cout << "***IDs: ";
+				for (Copy c : Database::getCopies()) //Find all IDs of that Book
+					if (c.getBook()->getISBN() == isbn)
+						cout << c.getID() << " ";
+				cout << endl << endl;
+				return; //There is only 1 ISBN per book
+			}
+		cout << "No Results." << endl;
+		break;
+	case 1: //Title Search
+		cout << "Enter a title to search for: ";
+		getline(in >> ws, title); // 'in >> ws' is used to include whitespace
+		title = toLower(title); //Converted to lowercase to ignore capitals
+		cout << endl;
+		Display::border();
+		for (Book b : Database::getBooks())
+			if (toLower(b.getTitle()).find(title) != string::npos) { //Find book with title or string in title
+				if (!found)
+					found = true;
+				b << cout; //Print Book Info
+				string t = b.getTitle();
+				cout << "***IDs: ";
+				for (Copy c : Database::getCopies()) //Find all IDs of that Book
+					if (c.getBook()->getTitle() == t)
+						cout << c.getID() << " ";
+				cout << endl << endl;
+			}
+		if(!found)
+			cout << "No Results." << endl;
+		break;
+	case 2: //Author Based Search
+		break;
+	case 3: //Category Based Search
+		break;
+	default: //Invalid Inputs
+		cout << "Invalid Input." << endl;
+		Display::border();
+		break;
+	}
+}
+
 //============ UTILITY FUNCTIONS ============// 
 //- they allow for searching through the database
 
@@ -123,4 +193,12 @@ int Database::getBookByISBN(string ISBN) {
 		if (books.at(i).getISBN() == ISBN)
 			index = i;
 	return index;
+}
+
+//Converts strings to lowercase
+string Database::toLower(string s) {
+	string temp = "";
+	for (char c : s)
+		temp += tolower(c);
+	return temp;
 }

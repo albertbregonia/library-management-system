@@ -39,7 +39,6 @@ public:
 	bool penalty();
 
 	//Actions
-	void searchBooks(istream& in);
 	void borrowBooks(istream& in);
 	void returnBooks(istream& in);
 };

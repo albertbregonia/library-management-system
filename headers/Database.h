@@ -16,14 +16,21 @@ private:
 	static vector<Book> books; //Types of Books
 	static vector<Copy> copies; //Virtual Books
 public:
+	//Accessors
 	static vector<Reader>& getReaders();
 	static vector<Librarian>& getAdmins();
 	static vector<Book>& getBooks();
 	static vector<Copy>& getCopies();
+
+	//Utility
 	static int getCopyByID(int id);
 	static int getBookByISBN(string ISBN);
+	static vector<string> split(string s);
+	static string toLower(string s);
+
+	//Traverse Database
+	static void searchBooks(istream& in);
 	static bool loadBooks();
 	static bool loadAccounts();
 	static void save();
-	static vector<string> split(string s);
 };

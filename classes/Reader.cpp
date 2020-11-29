@@ -100,14 +100,6 @@ ostream& Reader::operator<<(ostream& out) {
 
 bool Reader::operator==(Reader& r) { return getUsername() == r.getUsername() && getPassword() == r.getPassword(); }
 
-//Converts strings to lowercase
-static string toLower(string s) {
-	string temp = "";
-	for (char c : s)
-		temp += tolower(c);
-	return temp;
-}
-
 //Checks and issues a penalty when they have overdue books
 bool Reader::penalty() {
 	for (Copy c : borrowed)
@@ -121,65 +113,6 @@ bool Reader::penalty() {
 			return true;
 		}
 	return false;
-}
-
-//Option 1 - WIP
-void Reader::searchBooks(istream& in) {
-	//Display
-	int choice;
-	cout << "Search By: " << endl;
-	string keys[] = { "ISBN", "Title", "Author", "Category" };
-	for (int i = 0; i < 4; i++)
-		cout << "\t " << i << " - " << keys[i] << endl;
-	cout << endl << "Selection: ";
-	in >> choice;
-	cout << endl;
-	Display::border();
-	//Search
-	string isbn, title, author, category;
-	switch (choice) {
-	case 0: //ISBN Search
-		cout << "Enter an ISBN to search for: ";
-		cin >> isbn;
-		cout << endl;
-		Display::border();
-		for (Book b : Database::getBooks())
-			if (b.getISBN() == isbn) { //Find book with ISBN
-				b << cout; //Print Book Info
-				cout << "***IDs: ";
-				for (Copy c : Database::getCopies()) //Find all IDs of that Book
-					if (c.getBook()->getISBN() == isbn)
-						cout << c.getID() << " ";
-				cout << endl << endl;
-				return; //There is only 1 ISBN per book
-			}
-		break;
-	case 1: //Title Search
-		cout << "Enter a title to search for: ";
-		cin >> title;
-		title = toLower(title); //Converted to lowercase to ignore capitals
-		cout << endl;
-		Display::border();
-		for (Book b : Database::getBooks())
-			if (toLower(b.getTitle()).find(title) != string::npos) { //Find book with title or string in title
-				b << cout; //Print Book Info
-				string t = b.getTitle();
-				cout << "***IDs: ";
-				for (Copy c : Database::getCopies()) //Find all IDs of that Book
-					if (c.getBook()->getTitle() == t)
-						cout << c.getID() << " ";
-				cout << endl << endl;
-			}
-		break;
-	case 2: //Author Based Search
-		break;
-	case 3: //Category Based Search
-		break;
-	default: //Invalid Inputs
-		cout << "Invalid Input." << endl;
-		Display::border();
-		break;
-	}
 }
 
 //Option 2 - Boorow Books
