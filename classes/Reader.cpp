@@ -145,8 +145,8 @@ bool Reader::anyOverdue() {
 bool Reader::isOverdue(Copy* c) {
 	if (Date::getDays() > c->getExpirationDate()) {
 		penalties++; //increase penalty if overdue
-		if (penalties % 5 == 0 && penalties > 5) //penalties>5 and if penalties is a multiple of 5 decrease max #
-			max--;
+		if (penalties > 5) //penalties>5 and if penalties is a multiple of 5 decrease max #
+			max-=(penalties/5);
 		return true;
 	}
 	return false;
@@ -195,7 +195,7 @@ void Reader::borrowBooks(istream& in) {
 				else //If they have a reservation on one book but another copy with a different ID is available, they can borrow it
 					for (int i = 0; i < Database::getCopies().size(); i++)
 						if (Database::getCopies()[i].getBook() == desired->getBook() && Database::getCopies()[i].getBorrower() == "none")
-							if (desired->getReservers()[0] == getUsername()) {
+							if (!desired->getReservers().empty() && desired->getReservers()[0] == getUsername()) {
 								//Book Modifications
 								Database::getCopies()[i].setBorrower(getUsername());
 								Database::getCopies()[i].setStartDate(Date::getDays()); //set start period to current date
