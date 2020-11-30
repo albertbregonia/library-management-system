@@ -58,22 +58,25 @@ void Librarian::deleteBook(istream& in) {
 	cout << "Enter the ID of the book you wish to delete: ";
 	int id;
 	in >> id;
-	if (Database::getCopyByID(id) >= 0) { //Check for valid book
-		if (Database::getCopies()[Database::getCopyByID(id)].getBorrower() == "none") //Can only delete if the copy is not lent out
+	if (Database::getCopyByID(id) >= 0) //Check for valid book
+		if (Database::getCopies()[Database::getCopyByID(id)].getBorrower() == "none") {
+			//Can only delete if the copy is not lent out
 			for (int i = 0; i < Database::getReaders().size(); i++) //look through all users
 				for (int z = 0; z < (Database::getReaders()[i].getReserved()).size(); z++) //look through each reserve list of each user
 					if (Database::getReaders()[i].getReserved()[z].getID() == id) //if the copy exists within their reserve list, remove it
 						Database::getReaders()[i].getReserved().erase(Database::getReaders()[i].getReserved().begin() + z);
-		//Find other copies with the same book
-		bool other = false;
-		for (Copy c : Database::getCopies())
-			if (other = c.getBook() == Database::getCopies()[Database::getCopyByID(id)].getBook() && c.getID() != id)
-				break;
-		if (!other)//if this is the last copy, delete the book as well
-			Database::getBooks().erase(Database::getBooks().begin() + Database::getBookByISBN(Database::getCopies()[Database::getCopyByID(id)].getBook()->getISBN()));
-		Database::getCopies().erase(Database::getCopies().begin() + Database::getCopyByID(id)); //delete the whole book
-		cout << endl << "Successfully deleted Book with ID #" << id << endl;
-	}
+			//Find other copies with the same book
+			bool other = false;
+			for (Copy c : Database::getCopies())
+				if (other = c.getBook() == Database::getCopies()[Database::getCopyByID(id)].getBook() && c.getID() != id)
+					break;
+			if (!other)//if this is the last copy, delete the book as well
+				Database::getBooks().erase(Database::getBooks().begin() + Database::getBookByISBN(Database::getCopies()[Database::getCopyByID(id)].getBook()->getISBN()));
+			Database::getCopies().erase(Database::getCopies().begin() + Database::getCopyByID(id)); //delete the whole book
+			cout << endl << "Successfully deleted Book with ID #" << id << endl;
+		}
+		else
+			cout << "Unable to delete book. This copy has already been lent out to a reader." << endl;
 	else
 		cout << endl << "Book with ID #" << id << " was not found." << endl;
 }

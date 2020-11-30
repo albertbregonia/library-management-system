@@ -86,6 +86,7 @@ ostream& Reader::operator<<(ostream& out) {
 		out << "Password: " << getPassword() << endl;
 		out << "Borrow Period: " << term << endl;
 		out << "Max Number of Books you are able to Borrow: " << max << endl;
+		out << "Penalty: " << penalties << endl;
 		out << "Currently Borrowed Books: " << endl << endl;
 		for (Copy c : borrowed) {
 			c << out;
