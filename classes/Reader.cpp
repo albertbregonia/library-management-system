@@ -145,8 +145,8 @@ bool Reader::anyOverdue() {
 bool Reader::isOverdue(Copy* c) {
 	if (Date::getDays() > c->getExpirationDate()) {
 		penalties++; //increase penalty if overdue
-		if (penalties > 5) //penalties>5 and if penalties is a multiple of 5 decrease max #
-			max-=(penalties/5);
+		if (penalties == 6 || penalties % 5 == 0) //penalties>5 and if penalties is a multiple of 5 decrease max #
+			max--;
 		return true;
 	}
 	return false;
