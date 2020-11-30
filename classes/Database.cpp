@@ -9,12 +9,17 @@ vector<Book> Database::books = vector<Book>(); //Types of Books
 vector<Reader> Database::readers = vector<Reader>(); //Reader - Student/Teacher
 vector<Copy> Database::copies = vector<Copy>(); //Books you can Borrow
 vector<Librarian> Database::admins = vector<Librarian>(); //Admin
+int Database::partition = 0;
 
 //Accessors
+int Database::getPartitioner() { return partition; }
 vector<Reader>& Database::getReaders() { return readers; }
 vector<Book>& Database::getBooks() { return books; }
 vector<Copy>& Database::getCopies() { return copies; }
 vector<Librarian>& Database::getAdmins() { return admins; }
+
+//Mutator
+void Database::setPartitioner(int i) { partition = i; }
 
 //Startup
 bool Database::loadBooks() { //Loads all the books from the database file 'book.txt' and 'copies.txt'
@@ -42,50 +47,61 @@ bool Database::loadBooks() { //Loads all the books from the database file 'book.
 }
 
 bool Database::loadAccounts() {
-	//Loads all the accounts from the database file 'reader.txt'
-	//- this was changed from 'student.txt' to incorporate teachers as well
-	fstream readerFile("data\\reader.txt");
+	//Loads all the accounts from the database files 'admin.txt', 'student.txt', 'teacher.txt'
+	fstream studentFile("data\\student.txt");
+	fstream teacherFile("data\\teacher.txt");
 	fstream adminFile("data\\admin.txt");
 	Reader r = Reader();
 	Librarian l = Librarian();
-	if (readerFile.is_open() && adminFile.is_open()) {
-		while (!readerFile.eof()) { //load in readers
-			r >> readerFile;
+	if (studentFile.is_open() && teacherFile.is_open() && adminFile.is_open()) {
+		while (!studentFile.eof()) { //load in readers
+			r >> studentFile;
+			if (r.getUsername() != "none") //ensure a real user is read in
+				readers.push_back(r);
+		}
+		partition = readers.size() - 1; //save index of where students end in the vector
+		while (!teacherFile.eof()) { //load in teachers
+			r >> teacherFile;
 			if (r.getUsername() != "none") //ensure a real user is read in
 				readers.push_back(r);
 		}
 		while (!adminFile.eof()) { //load in admins
 			l >> adminFile;
-			if (l.getUsername() != "admin") //ensure a real admin account is read in
+			if (l.getUsername() != "admin") //ensure a real admin account is read in, nothing default
 				admins.push_back(l);
 		}
 	}
-	readerFile.close();
+	teacherFile.close();
 	adminFile.close();
 	return readers.size() > 0 && admins.size() > 0;
 }
 
 void Database::save() {
 	//Save current data into the databases
-	ofstream readerFile("data\\reader.txt");
+	ofstream studentFile("data\\student.txt");
+	ofstream teacherFile("data\\teacher.txt");
 	ofstream bookFile("data\\book.txt");
 	ofstream copyFile("data\\copy.txt");
 	ofstream libFile("data\\admin.txt");
-	if (readerFile.is_open() && bookFile.is_open() && copyFile.is_open() && libFile.is_open()) {
+	if (studentFile.is_open() && teacherFile.is_open() && bookFile.is_open() && copyFile.is_open() && libFile.is_open()) {
 		//Save Books
 		for (Book b : books)
 			b << bookFile;
 		for (Copy c : copies)
 			c << copyFile;
 		//Save Accounts
-		for (Reader r : readers)
-			r << readerFile;
+		for (int i = 0; i < readers.size(); i++)
+			if (i <= partition) //students
+				readers[i] << studentFile;
+			else //teachers
+				readers[i] << teacherFile;
 		for (Librarian l : admins)
 			l << libFile;
 	}
 	else
 		cout << "Error writing to database files! Please resolve this issue or contact a system administrator." << endl;
-	readerFile.close();
+	studentFile.close();
+	teacherFile.close();
 	bookFile.close();
 	copyFile.close();
 	libFile.close();

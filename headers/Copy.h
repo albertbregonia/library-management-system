@@ -29,6 +29,7 @@ public:
 
 	//Mutators
 	void setID(int id);
+	void setBook(Book* book);
 	void setBorrower(string borrower);
 	void setReservers(vector<string> reservers);
 	void setAvailability(bool available);

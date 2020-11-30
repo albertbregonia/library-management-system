@@ -4,7 +4,7 @@ C++17 Standard Library Quick Reference: A Pocket Guide to Data Structures, Algor
 Peter Van Weert
 Engineering
 Index1
-0
+3
 5
 ----------------
 978-0321712592
@@ -12,7 +12,7 @@ Physics for Scientists & Engineers with Modern Physics (4th Edition)
 Douglas C. Giancoli
 Science
 Index2
-2
+1
 4
 ----------------
 978-1506696720
@@ -20,7 +20,7 @@ Introduction to Linear Algebra: Models, Methods, and Theory
 Alan Tucker
 Math
 Index3
-3
+1
 3
 ----------------
 978-0201309652
@@ -28,7 +28,7 @@ C++ solutions: companion to Stroustrup's book C++ programming language
 David Vandevoorde
 Engineering
 Index4
-4
+1
 5
 ----------------
 978-1484249223

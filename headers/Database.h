@@ -11,6 +11,7 @@ using namespace std;
 //Database Functions and Extra Utilities
 class Database {
 private:
+	static int partition; //index of partition between students and teachers in reader vector
 	static vector<Reader> readers;
 	static vector<Librarian> admins; //Administrative Accounts
 	static vector<Book> books; //Types of Books
@@ -22,6 +23,8 @@ private:
 	};
 public:
 	//Accessors
+	static int getPartitioner();
+	static void setPartitioner(int i);
 	static vector<Reader>& getReaders();
 	static vector<Librarian>& getAdmins();
 	static vector<Book>& getBooks();

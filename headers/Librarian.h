@@ -6,8 +6,10 @@ public:
 	Librarian();
 	Librarian(string username, string password);
 
+	void addBook(istream& in);
 	void deleteBook(istream& in);
-	void deleteUser(istream& in);
 	void searchUsers(istream& in);
+	void addUser(istream& in);
+	void deleteUser(istream& in);
 };
 

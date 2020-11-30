@@ -34,6 +34,6 @@ void Display::menu(bool type) {
 }
 
 void Display::clrscr() {
-	for (int i = 0; i < 8; i++)
+	for (int i = 0; i < 6; i++)
 		cout << endl; //pseudo clear the screen
 }

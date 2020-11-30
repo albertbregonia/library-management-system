@@ -40,6 +40,10 @@ int main() {
 	start();
 	return 0;
 }
+template<typename Base, typename T>
+inline bool instanceof(const T*) {
+	return std::is_base_of<Base, T>::value;
+}
 
 //Load into RAM the book/student data upon failure, the system aborts
 void startup() {
@@ -87,31 +91,31 @@ void gui(bool type) {
 			if (type)  //Borrow Books
 				Database::getReaders().at(current).borrowBooks(cin);
 			else //Add Books for Admin
-				cout << "To Be Implemented" << endl; 
+				Database::getAdmins().at(current).addBook(cin);
 			break;
 		case 3: 
 			if (type) //Return Books
 				Database::getReaders().at(current).returnBooks(cin);
 			else //Delete Books for Admin
-				cout << "To Be Implemenented" << endl; 
+				Database::getAdmins().at(current).deleteBook(cin);
 			break;
 		case 4: 
 			if (type) //Reserve Books for Student/Teacher
 				Database::getReaders().at(current).reserveBooks(cin);
 			else //Search Users for Admin
-				cout << "To Be Implemenented" << endl;
+				Database::getAdmins().at(current).searchUsers(cin);
 			break;
 		case 5: 
-			if(type) //Cancel Reservations for Student/Teacher
+			if (type) //Cancel Reservations for Student/Teacher
 				Database::getReaders().at(current).cancelReserve(cin);
 			else //Add Users for Admin
-				cout << "To be Implemeneted" << endl;
+				Database::getAdmins().at(current).addUser(cin);
 			break;
 		case 6: 
 			if (type) //Renew Books for Student/Teacher
 				Database::getReaders().at(current).renewBooks(cin);
 			else
-				cout << "To Be Implemented" << endl; //Delete Users
+				Database::getAdmins().at(current).deleteUser(cin);
 			break;
 		case 7:
 			if(type) //About Me for Admin

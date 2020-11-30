@@ -37,6 +37,7 @@ long Copy::getExpirationDate() { return end; }
 
 //Mutators
 void Copy::setID(int id) { this->id = id; }
+void Copy::setBook(Book* book) { this->book = book; }
 void Copy::setBorrower(string borrower) { this->borrower = borrower; }
 void Copy::setAvailability(bool available) { this->available = available; }
 void Copy::setReservers(vector<string> reservers) { this->reservers = reservers; }

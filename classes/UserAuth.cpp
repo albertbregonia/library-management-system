@@ -1,23 +1,52 @@
 #include "UserAuth.h"
 #include "Database.h"
+#include "Teacher.h"
 #include <conio.h>
 
 using namespace std;
 
 //Registers a new user into the database
 bool UserAuthentication::signup(istream &in) {
+	cout << "What type will this user be: " << endl;
+	cout << "\t0 - Student" << endl;
+	cout << "\t1- Teacher" << endl;
+	cout << "\t2 - Librarian/Administrator" << endl;
+	cout << endl << endl << "Choice: ";
+	int choice;
+	in >> choice;
 	string user, pw;
-	cout << "Please enter your desired username: ";
+	cout << "Please enter the desired username (Capitalization is ignored): ";
 	in >> user;
+	user = Database::toLower(user);
 	for (Reader r : Database::getReaders()) //Unique usernames are required
-		if (r.getUsername() == user)
+		if (Database::toLower(r.getUsername()) == user)
 			return false;
-	cout << "Please enter your desired password: ";
+	for (Librarian l : Database::getAdmins())
+		if (Database::toLower(l.getUsername()) == user)
+			return false;
+	cout << "Please enter the desired password: ";
 	in >> pw;
-	Reader r = Reader();
-	r.setUsername(user);
-	r.setPassword(pw);
-	Database::getReaders().push_back(r);  //change in the database as well as the current session
+	Teacher t;
+	Student s;
+	Librarian l;
+	switch (choice) {
+	case 1:
+		t.setUsername(user);
+		t.setPassword(pw);
+		Database::getReaders().push_back(t);
+		break;
+	case 2:
+		l.setUsername(user);
+		l.setPassword(pw);
+		Database::getAdmins().push_back(l);
+		break;
+	default: //by default, users are students
+		s.setUsername(user);
+		s.setPassword(pw);
+		Database::getReaders().insert(Database::getReaders().begin() + Database::getPartitioner()+1, s);
+		Database::setPartitioner(Database::getPartitioner() + 1); //shift the partitioner over as a student was just added
+		break;
+	}
 	Database::save(); //write out to file
 	return true;
 }
