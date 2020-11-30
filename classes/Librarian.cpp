@@ -23,11 +23,17 @@ void Librarian::deleteUser(istream& in) {
 	in >> user;
 	user = Database::toLower(user);
 	for (int i = 0; i < Database::getReaders().size(); i++) //Student and Teacher Accounts
-		if (Database::toLower(Database::getReaders()[i].getUsername()) == user) {
-			Database::getReaders().erase(Database::getReaders().begin() + i);
-			cout << "Successfully erased - Username: " << user << endl;
-			return;
-		}
+		if (Database::toLower(Database::getReaders()[i].getUsername()) == user)
+			if (Database::getReaders()[i].getBorrowedBookList().empty()) {
+				Database::getReaders().erase(Database::getReaders().begin() + i);
+				//Delete User from Reserve List
+				for (int x = 0; x < Database::getCopies().size(); x++)
+					for (int y = 0; y < Database::getCopies()[x].getReservers().size(); y++)
+						if (Database::toLower(Database::getCopies()[x].getReservers()[y]) == user)
+							Database::getCopies()[x].getReservers().erase(Database::getCopies()[x].getReservers().begin() + y);
+				cout << "Successfully erased - Username: " << user << endl;
+				return;
+			}
 	for(int i = 0; i < Database::getAdmins().size(); i++) //Admin Accounts
 		if(Database::toLower(Database::getAdmins()[i].getUsername()) == user) {
 			Database::getAdmins().erase(Database::getAdmins().begin() + i);
