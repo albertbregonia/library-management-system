@@ -5,10 +5,10 @@
 #include <fstream>
 
 //Initialize Static Variables
-vector<Book> Database::books = vector<Book>();
-vector<Reader> Database::readers = vector<Reader>();
-vector<Copy> Database::copies = vector<Copy>();
-vector<Librarian> Database::admins = vector<Librarian>();
+vector<Book> Database::books = vector<Book>(); //Types of Books
+vector<Reader> Database::readers = vector<Reader>(); //Reader - Student/Teacher
+vector<Copy> Database::copies = vector<Copy>(); //Books you can Borrow
+vector<Librarian> Database::admins = vector<Librarian>(); //Admin
 
 //Accessors
 vector<Reader>& Database::getReaders() { return readers; }
@@ -93,7 +93,7 @@ void Database::save() {
 
 //============ FUNCTIONS ALL USERS CAN DO ============// 
 
-//Option 1 - WIP
+//Option 1
 void Database::searchBooks(istream& in) {
 	//User Input To Search By Selected Key
 	int choice;

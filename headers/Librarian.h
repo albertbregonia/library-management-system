@@ -5,5 +5,9 @@ public:
 	//Constructor
 	Librarian();
 	Librarian(string username, string password);
+
+	void deleteBook(istream& in);
+	void deleteUser(istream& in);
+	void searchUsers(istream& in);
 };
 
