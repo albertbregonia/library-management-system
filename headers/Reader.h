@@ -43,5 +43,7 @@ public:
 	void borrowBooks(istream& in);
 	void returnBooks(istream& in);
 	void reserveBooks(istream& in);
+	void cancelReserve(istream& in);
+	void renewBooks(istream& in);
 };
 

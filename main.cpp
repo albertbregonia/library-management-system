@@ -103,13 +103,13 @@ void gui(bool type) {
 			break;
 		case 5: 
 			if(type) //Cancel Reservations for Student/Teacher
-				cout << "To be Implemeneted" << endl;
+				Database::getReaders().at(current).cancelReserve(cin);
 			else //Add Users for Admin
 				cout << "To be Implemeneted" << endl;
 			break;
 		case 6: 
 			if (type) //Renew Books for Student/Teacher
-				cout << "To be Implemeneted" << endl;
+				Database::getReaders().at(current).renewBooks(cin);
 			else
 				cout << "To Be Implemented" << endl; //Delete Users
 			break;
