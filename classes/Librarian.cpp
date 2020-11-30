@@ -41,6 +41,7 @@ void Librarian::addBook(istream& in) {
 		if (Database::getBooks()[i].getISBN() == b.getISBN()) {
 			Database::getBooks()[i].setCount(Database::getBooks()[i].getCount() + 1); //increase copy count
 			c.setBook(&Database::getBooks()[i]);  //set the reference book of the copy to the one in the database already
+			Database::getCopies().push_back(c);
 			cout << endl << "Successfully created a new copy with ID #" << index << " as the book with ISBN: " << b.getISBN() << " was already found in the database." << endl << endl;
 			return;
 		}
@@ -48,6 +49,7 @@ void Librarian::addBook(istream& in) {
 	//If no pre-existing book was found:
 	Database::getBooks().push_back(b); //add new book to database
 	c.setBook(&Database::getBooks()[Database::getBooks().size() - 1]); //set book pointer to newly added book
+	Database::getCopies().push_back(c);
 	Database::save(); //save back to text files
 }
 
@@ -123,24 +125,29 @@ void Librarian::deleteUser(istream& in) {
 	string user;
 	in >> user;
 	user = Database::toLower(user);
-	for (int i = 0; i < Database::getReaders().size(); i++) //Student and Teacher Accounts
-		if (Database::getReaders()[i].getUsername() == user)
-			if (Database::getReaders()[i].getBorrowedBookList().empty()) { //Check if the user has not borrowed any books
-				Database::getReaders().erase(Database::getReaders().begin() + i);
-				//Delete User from Reserve List
-				for (int x = 0; x < Database::getCopies().size(); x++) //look through each copy
-					for (int y = 0; y < Database::getCopies()[x].getReservers().size(); y++) //look through the reserver of each copy
-						if (Database::toLower(Database::getCopies()[x].getReservers()[y]) == user) { //delete the user and their reserve date from the copy
-							Database::getCopies()[x].getReservers().erase(Database::getCopies()[x].getReservers().begin() + y);
-							Database::getCopies()[x].getReserveDates().erase(Database::getCopies()[x].getReserveDates().begin() + y);
-						}
+	if (user != getUsername()) {
+		for (int i = 0; i < Database::getReaders().size(); i++) //Student and Teacher Accounts
+			if (Database::getReaders()[i].getUsername() == user)
+				if (Database::getReaders()[i].getBorrowedBookList().empty()) { //Check if the user has not borrowed any books
+					Database::getReaders().erase(Database::getReaders().begin() + i);
+					//Delete User from Reserve List
+					for (int x = 0; x < Database::getCopies().size(); x++) //look through each copy
+						for (int y = 0; y < Database::getCopies()[x].getReservers().size(); y++) //look through the reserver of each copy
+							if (Database::toLower(Database::getCopies()[x].getReservers()[y]) == user) { //delete the user and their reserve date from the copy
+								Database::getCopies()[x].getReservers().erase(Database::getCopies()[x].getReservers().begin() + y);
+								Database::getCopies()[x].getReserveDates().erase(Database::getCopies()[x].getReserveDates().begin() + y);
+							}
+					cout << "Successfully erased - Username: " << user << endl;
+					return;
+				}
+		for (int i = 0; i < Database::getAdmins().size(); i++) //Admin Accounts
+			if (Database::getAdmins()[i].getUsername() == user) {
+				Database::getAdmins().erase(Database::getAdmins().begin() + i);
 				cout << "Successfully erased - Username: " << user << endl;
 				return;
 			}
-	for(int i = 0; i < Database::getAdmins().size(); i++) //Admin Accounts
-		if(Database::getAdmins()[i].getUsername() == user) {
-			Database::getAdmins().erase(Database::getAdmins().begin() + i);
-			cout << "Successfully erased - Username: " << user << endl;
-			return;
-		}
+		cout << endl << endl << "Could not find a user with the username: " << user << endl;
+	}
+	else
+		cout << "You cannot delete your own account whilst signed in!" << endl;
 }

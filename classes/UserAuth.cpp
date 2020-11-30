@@ -58,9 +58,18 @@ int UserAuthentication::login(istream &in, bool type) {
 	in >> user;
 	cout << "Please enter your password: ";
 	char c;
+	int ctr = 0; //pos for backspace in password mask
 	while ((c=_getch()) != '\r'){ //using <conio.h> and C functions, treat 'pw' like a vector and put '*' per character
-		pw.push_back(c); //check until 'c' is the return key or '\r' (basically when you press enter)
-		cout << "*";
+		if (c > 32 && c < 128) { //if alphabet
+			pw.push_back(c); //check until 'c' is the return key or '\r' (basically when you press enter)
+			cout << "*";
+			ctr++;
+		}
+		else if (c == 8 && ctr > 0) { //backspace
+			pw.erase(pw.end()-1);
+			cout << "\b \b";
+			ctr--;
+		}
 	}
 	if (type) {
 		for (int i = 0; i < Database::getReaders().size(); i++)

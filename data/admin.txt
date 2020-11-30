@@ -1,10 +1,4 @@
 
-admin1
-admin123
-----------------
-librarian1
-liblib2
-----------------
-kanin
-vt
+admin0
+123
 ----------------
