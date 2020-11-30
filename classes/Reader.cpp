@@ -153,24 +153,26 @@ bool Reader::isOverdue(Copy* c) {
 
 //Option 2 - Borrow Books --- Only Issue is Reserve Dates
 void Reader::borrowBooks(istream& in) {
-	if (!anyOverdue()) //Check for penalty
+	if (!anyOverdue()) //Check for overdue
 		if (getMaxCopies() > getBorrowedBookList().size()) { //Check if they haven't checked out more than their maximum
 			int id;
 			cout << "ID of desired book: "; //Input for desired book ID
 			in >> id;
 			if (Database::getCopyByID(id) >= 0) { //Check for invalid ID
 				Copy* desired = &Database::getCopies().at(Database::getCopyByID(id)); //A pointer is used here to modify the value directly in the database instead of a copy of the value
+				
 				int res = 0; //total number of reservations
 				for (Copy c : Database::getCopies())
 					if (c.getBook() == desired->getBook())
 						res += c.getReservers().size();
 				res = floor(res / 20); //every 20 reservees the borrow period goes down by 1
+
 				if (desired->getBorrower() == "none") { //If nobody has borrowed the book, set the book's information to that of the borrower
-					if (desired->getReservers().empty() || desired->getReservers()[0] == getUsername()) {
+					if (desired->getReservers().empty() || desired->getReservers()[0] == getUsername()) { //If no reservations or current reserver
 						//Book Modifications
 						desired->setBorrower(getUsername());
 						desired->setStartDate(Date::getDays()); //set start period to current date
-						desired->setExpirationDate(Date::getDays() + (term - res));
+						desired->setExpirationDate(Date::getDays() + (term - res)); //borrow time is based on popularity
 						desired->setAvailability(false);
 						desired->getBook()->setCount(desired->getBook()->getCount() - 1);
 
@@ -327,7 +329,7 @@ void Reader::renewBooks(istream& in) {
 				return;
 			}
 			else
-				cout << "Renewal Failed. Either reserves are present on this book or you are not the current borrower" << endl;
+				cout << "Renewal Failed. Either reservations are present on this book or you are not the current borrower" << endl;
 		cout << "The desired book with the ID #" << id << " was not found in the database." << endl;
 	}
 	Database::save();
