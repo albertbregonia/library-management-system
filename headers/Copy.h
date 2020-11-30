@@ -9,13 +9,13 @@ private:
 	string borrower; //Current Borrower - SAVED AS USERNAME
 	vector<string> reservers; //reservers, a vector is used instead of a queue to allow for easy deletion
 	bool available;
-	long reserveDate;
+	vector<long> reserveDates;
 	long start; //borrow date
 	long end; //expiration date
 public:
 	//Default Constructor
 	Copy();
-	Copy(int id, Book* book, string borrower, vector<string> reservers, bool available, long res, long start, long end);
+	Copy(int id, Book* book, string borrower, vector<string> reservers, bool available, vector<long> res, long start, long end);
 	
 	//Accessors
 	int getID();
@@ -23,7 +23,7 @@ public:
 	string getBorrower(); 
 	vector<string>& getReservers();
 	bool getAvailability();
-	long getReserveDate();
+	vector<long>& getReserveDates();
 	long getStartDate();
 	long getExpirationDate();
 
@@ -32,7 +32,7 @@ public:
 	void setBorrower(string borrower);
 	void setReservers(vector<string> reservers);
 	void setAvailability(bool available);
-	void setReserveDate(long res);
+	void setReserveDates(vector<long> res);
 	void setStartDate(long start);
 	void setExpirationDate(long end);
 

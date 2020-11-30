@@ -42,5 +42,6 @@ public:
 	//Actions
 	void borrowBooks(istream& in);
 	void returnBooks(istream& in);
+	void reserveBooks(istream& in);
 };
 

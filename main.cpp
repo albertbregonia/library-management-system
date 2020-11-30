@@ -56,6 +56,8 @@ void start() {
 	bool type; // true for student/teacher - false for admin
 	Display::welcome();
 	cin >> type;
+	if (type > 1 || type < 0) //Default choice is student
+		type = 1;
 	Display::clrscr();
 	while ((current = UserAuthentication::login(cin,type)) < 0) { //Attempt Login, Repeats until login is successful, result is stored in 'current'
 		cout << endl;
@@ -94,8 +96,8 @@ void gui(bool type) {
 				cout << "To Be Implemenented" << endl; 
 			break;
 		case 4: 
-			if(type) //Reserve Books for Student/Teacher
-				cout << "To Be Implemenented" << endl;
+			if (type) //Reserve Books for Student/Teacher
+				Database::getReaders().at(current).reserveBooks(cin);
 			else //Search Users for Admin
 				cout << "To Be Implemenented" << endl;
 			break;

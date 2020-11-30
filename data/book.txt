@@ -4,7 +4,7 @@ C++17 Standard Library Quick Reference: A Pocket Guide to Data Structures, Algor
 Peter Van Weert
 Engineering
 Index1
-1
+0
 5
 ----------------
 978-0321712592
@@ -29,5 +29,13 @@ David Vandevoorde
 Engineering
 Index4
 4
+5
+----------------
+978-1484249223
+Sample Book
+Peter Van Weert
+Engineering
+Index5
+1
 5
 ----------------

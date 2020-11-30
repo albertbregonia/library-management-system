@@ -15,8 +15,7 @@ private:
 	static vector<Librarian> admins; //Administrative Accounts
 	static vector<Book> books; //Types of Books
 	static vector<Copy> copies; //Virtual Books
-	//Defined to Sort Books based on popularity
-	struct totalBookInfo {
+	struct totalBookInfo { //Defined to Sort Books based on popularity
 		Book book = Book();
 		string ids = "";
 		int numReserves = 0;
