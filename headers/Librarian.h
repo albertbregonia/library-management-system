@@ -9,5 +9,7 @@ public:
 	void deleteBook(istream& in);
 	void deleteUser(istream& in);
 	void searchUsers(istream& in);
+	void addBook(istream& in);
+	void addUser(istream& in);
 };
 

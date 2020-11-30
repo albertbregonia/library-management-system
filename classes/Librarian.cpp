@@ -1,4 +1,4 @@
-#include "Librarian.h"
+﻿#include "Librarian.h"
 #include "Database.h"
 #include <iostream>
 
@@ -55,6 +55,54 @@ void Librarian::searchUsers(istream& in) {
 	for (Librarian l : Database::getAdmins())
 		if (Database::toLower(l.getUsername()) == user) {
 			l << cout;
+			return;
+		}
+}
+
+//add book
+void Librarian::addBook(istream& in) {
+	cout << "Enter the book you want to add by ISBN:" << endl;
+	string ISBN;
+	string title;
+	string author;
+	string category;
+	if (Database::getBookByISBN(ISBN) >= 0) { // judge the book exist or not
+		cout << "The book already exist." << endl;
+
+	}
+	else { // add the book information
+		cout << "Please enter the ISBN: " << endl;
+		cin >> ISBN;
+		Database::getBookByISBN().push_back(ISBN);
+		cout << "Please enter the book's title： " << endl;
+		cin >> title;
+		Database::getBooks().push_back(title);
+		cout << "Please enter the author: " << endl;
+		cin >> author;
+		cout << "Please enter the category: " << endl;
+		cin >> category;
+		cout << "Successfully add book." << endl;
+		return;
+	}
+}
+
+
+void Librarian::addUser(istream& in) {
+	cout << "Enter the username of the user you wish to add: ";
+	string user;
+	in >> user;
+	user = Database::toLower(user);
+	for (int i = 0; i < Database::getReaders().size(); i++) {//Student and Teacher Accounts
+		if (Database::toLower(Database::getReaders()[i].getUsername()) == user) { // judge the user exist or not
+			Database::getReaders.push_back(user);
+			cout << "Successfully add - Username: " << user << endl;
+			return;
+		}
+	}
+	for (int i = 0; i < Database::getAdmins().size(); i++) //Admin Accounts
+		if (Database::toLower(Database::getAdmins()[i].getUsername()) == user) {
+			Database::getAdmins().push_back(user);
+			cout << "Successfully add - Username: " << user << endl;
 			return;
 		}
 }
