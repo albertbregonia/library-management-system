@@ -40,10 +40,6 @@ int main() {
 	start();
 	return 0;
 }
-template<typename Base, typename T>
-inline bool instanceof(const T*) {
-	return std::is_base_of<Base, T>::value;
-}
 
 //Load into RAM the book/student data upon failure, the system aborts
 void startup() {
@@ -51,8 +47,6 @@ void startup() {
 		exit(-3);
 	else if (!Database::loadAccounts())
 		exit(-4);
-	//printBooks();
-	//printAccounts();
 }
 
 //Welcome and Login Menu
