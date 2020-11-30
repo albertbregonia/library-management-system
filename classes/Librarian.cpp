@@ -74,6 +74,7 @@ void Librarian::deleteBook(istream& in) {
 				Database::getBooks().erase(Database::getBooks().begin() + Database::getBookByISBN(Database::getCopies()[Database::getCopyByID(id)].getBook()->getISBN()));
 			Database::getCopies().erase(Database::getCopies().begin() + Database::getCopyByID(id)); //delete the whole book
 			cout << endl << "Successfully deleted Book with ID #" << id << endl;
+			Database::save();
 		}
 		else
 			cout << "Unable to delete book. This copy has already been lent out to a reader." << endl;
