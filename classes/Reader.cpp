@@ -187,7 +187,7 @@ void Reader::borrowBooks(istream& in) {
 								if (id == reserved[z]->getID())
 									reserved.erase(reserved.begin() + z);
 						}
-						Database::getCopies().at(Database::getCopyByID(id)) << cout; //Print recently borrowed book info
+						*desired << cout; //Print recently borrowed book info
 						Database::save(); //write back to database files
 						return;
 					}
@@ -244,7 +244,7 @@ void Reader::returnBooks(istream& in) {
 				getBorrowedBookList().erase(getBorrowedBookList().begin() + i); //remove from borrowed list
 				Database::save(); //write back to database files
 				cout << endl << "Successfully returned Book #" << id << endl << endl << endl;
-				Database::getCopies().at(Database::getCopyByID(id)) << cout; //Print recently returned book info
+				*desired << cout; //Print recently returned book info
 				return;
 			}
 		cout << "Error. You have not borrowed a book with the ID #" << id << endl;

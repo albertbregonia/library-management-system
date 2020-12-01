@@ -137,7 +137,7 @@ void Librarian::deleteUser(istream& in) {
 					//Delete User from Reserve List
 					for (int x = 0; x < Database::getCopies().size(); x++) //look through each copy
 						for (int y = 0; y < Database::getCopies()[x].getReservers().size(); y++) //look through the reserver of each copy
-							if (Database::toLower(Database::getCopies()[x].getReservers()[y]) == user) { //delete the user and their reserve date from the copy
+							if (Database::getCopies()[x].getReservers()[y] == user) { //delete the user and their reserve date from the copy
 								Database::getCopies()[x].getReservers().erase(Database::getCopies()[x].getReservers().begin() + y);
 								Database::getCopies()[x].getReserveDates().erase(Database::getCopies()[x].getReserveDates().begin() + y);
 							}
