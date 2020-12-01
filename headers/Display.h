@@ -4,6 +4,6 @@ class Display {
 public: //static keyword used to access these functions from utility class without an object
 	static void welcome();
 	static void border();
-	static void menu(bool type);
+	static void menu(bool& type);
 	static void clrscr();
 };

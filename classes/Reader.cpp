@@ -141,7 +141,7 @@ bool Reader::anyOverdue() {
 	return false;
 }
 
-//Checks if a specific copy is overdue
+//Checks if a specific copy is overdue - issues a penalty
 bool Reader::isOverdue(Copy* c) {
 	if (Date::getDays() > c->getExpirationDate()) {
 		penalties++; //increase penalty if overdue
@@ -241,9 +241,9 @@ void Reader::returnBooks(istream& in) {
 				desired->setAvailability(true);
 				desired->getBook()->setCount(desired->getBook()->getCount() + 1);
 				getBorrowedBookList().erase(getBorrowedBookList().begin() + i); //remove from borrowed list
-				Database::save(); //write back to database files
 				cout << endl << "Successfully returned Book #" << id << endl << endl << endl;
 				cout << *desired; //Print recently returned book info
+				Database::save(); //write back to database files
 				return;
 			}
 		cout << "Error. You have not borrowed a book with the ID #" << id << endl;
@@ -261,12 +261,12 @@ void Reader::reserveBooks(istream& in) {
 		in >> id;
 		if (Database::getCopyByID(id) >= 0) { //Check if the copy exists in the database
 			Copy* desired = &Database::getCopies()[Database::getCopyByID(id)];
-			for (string user : desired->getReservers())
+			for (string user : desired->getReservers()) //Check for existing reservation
 				if (user == getUsername()) {
 					cout << "You already have an existing reservation. " << endl;
 					return;
 				}
-			if (desired->getBorrower() == getUsername()) {
+			if (desired->getBorrower() == getUsername()) { //Check if user is the current borrower
 				cout << "You cannot reserve a book that you have already borrowed. However, you may renew this book." << endl;
 				return;
 			}
@@ -298,8 +298,8 @@ void Reader::cancelReserve(istream& in) {
 		for (int i = 0; i < Database::getCopies()[Database::getCopyByID(id)].getReservers().size(); i++)
 			if (Database::getCopies()[Database::getCopyByID(id)].getReservers()[i] == getUsername()) { //find the username in the reserve vector
 				Copy* desired = &Database::getCopies()[Database::getCopyByID(id)];
-				desired->getReservers().erase(desired->getReservers().begin() + i);
-				desired->getReserveDates().erase(desired->getReserveDates().begin() + i);
+				desired->getReservers().erase(desired->getReservers().begin() + i); //delete from reserve vector
+				desired->getReserveDates().erase(desired->getReserveDates().begin() + i); //delete respective reserve date
 				for (int z = 0; z < reserved.size(); z++) //remove from user reserved vector
 					if (id == reserved[z]->getID())
 						reserved.erase(reserved.begin() + z);

@@ -108,9 +108,9 @@ void Database::save() {
 	libFile.close();
 }
 
-//============ FUNCTIONS ALL USERS CAN DO ============// 
+//============ USERS FUNCTIONS ============// 
 
-//Option 1
+//Option 1 ***** cleanup
 void Database::searchBooks(istream& in) {
 	//User Input To Search By Selected Key
 	int choice;
@@ -118,6 +118,7 @@ void Database::searchBooks(istream& in) {
 	string keys[] = { "ISBN", "Title", "Author", "Category" };
 	for (int i = 0; i < 4; i++)
 		cout << "\t " << i << " - " << keys[i] << endl;
+	cout << "\t -1 - Cancel" << endl;
 	cout << endl << "Selection: ";
 	in >> choice;
 	cout << endl;
@@ -127,12 +128,18 @@ void Database::searchBooks(istream& in) {
 	string key;
 	vector<totalBookInfo> popularity;
 	bool found = false;
-	switch (choice) {
-	case 0: //ISBN Search
-		cout << "Enter an ISBN to search for: ";
-		in >> key;
+
+	if (choice >= 0 && choice < 4) { //User Input
+		cout << "Enter [" << keys[choice] << "] to search for: ";
+		getline(in >> ws, key); // 'in >> ws' is used to include whitespace
+		key = toLower(key); //lowercase for better results
 		cout << endl;
 		Display::border();
+	}
+	switch (choice) {
+	case -1:
+		break;
+	case 0: //ISBN Search
 		for (Book b : Database::getBooks())
 			if (b.getISBN() == key) { //Find book with ISBN
 				cout << b; //Print Book Info
@@ -146,11 +153,6 @@ void Database::searchBooks(istream& in) {
 		cout << "No Results." << endl;
 		break;
 	case 1: //Title Search
-		cout << "Enter a title to search for: ";
-		getline(in >> ws, key); // 'in >> ws' is used to include whitespace
-		key = toLower(key); //Converted to lowercase to ignore capitals
-		cout << endl;
-		Display::border();
 		for (Book b : Database::getBooks())
 			if (toLower(b.getTitle()).find(key) != string::npos) { //Find book with title or string in title
 				if (!found) //At least 1 result
@@ -158,7 +160,7 @@ void Database::searchBooks(istream& in) {
 				cout << b; //Print Book Info
 				string t = b.getTitle();
 				cout << "***IDs: ";
-				for (Copy c : Database::getCopies()) //Find all IDs of that Book
+				for (Copy c : Database::getCopies()) //Find all IDs of that Book and print
 					if (c.getBook()->getTitle() == t)
 						cout << c.getID() << " ";
 				cout << endl << endl;
@@ -167,13 +169,10 @@ void Database::searchBooks(istream& in) {
 			cout << "No Results." << endl;
 		break;
 	case 2: //Author Based Search
-		cout << "Enter an author to search for: ";
-		getline(in >> ws, key);
-		key = toLower(key);
-		cout << endl;
-		Display::border();
+	case 3: //Category Based Search - As choices 2 and 3 carry out the same algorithm an if statement is used to simplify code
 		for (Book b : Database::getBooks())
-			if (toLower(b.getAuthor()).find(key) != string::npos) { //Find book with title or string in title
+			if ((choice == 2 && toLower(b.getAuthor()).find(key) != string::npos) || //Find book with author or string in author if 2
+				(choice == 3 && toLower(b.getCategory()).find(key) != string::npos)) { //Find book with category or string in category if 3
 				if (!found) //At least 1 result
 					found = true;
 				totalBookInfo temp; //Save Book, IDs and Reserve Count for each copy
@@ -182,38 +181,7 @@ void Database::searchBooks(istream& in) {
 				temp.ids = "***IDs: ";
 				for (Copy c : Database::getCopies()) //Find all IDs of that Book
 					if (c.getBook()->getTitle() == t) {
-						temp.ids += to_string(c.getID());
-						temp.ids += " ";
-						temp.numReserves += c.getReservers().size();
-					}
-				popularity.push_back(temp); //Add to list of books to sort based on popularity
-			}
-		if (found){
-			sort(popularity); //selection sort based on number of reserves
-			for (totalBookInfo i : popularity) //Print books
-				cout << i.book << i.ids << endl << endl;
-		}
-		else
-			cout << "No Results." << endl;
-		break;
-	case 3: //Category Based Search
-		cout << "Enter a category to search for: ";
-		getline(in >> ws, key);
-		key = toLower(key);
-		cout << endl;
-		Display::border();
-		for (Book b : Database::getBooks())
-			if (toLower(b.getCategory()).find(key) != string::npos) { //Find book with title or string in title
-				if (!found) //At least 1 result
-					found = true;
-				totalBookInfo temp; //Save Book, IDs and Reserve Count for each copy
-				temp.book = b;
-				string t = b.getTitle();
-				temp.ids = "***IDs: ";
-				for (Copy c : Database::getCopies()) //Find all IDs of that Book
-					if (c.getBook()->getTitle() == t) {
-						temp.ids += to_string(c.getID());
-						temp.ids += " ";
+						temp.ids += to_string(c.getID()) + " "; //update totalBookInfo to sort by popularity
 						temp.numReserves += c.getReservers().size();
 					}
 				popularity.push_back(temp); //Add to list of books to sort based on popularity
@@ -248,8 +216,7 @@ void Database::changePassword(istream& in, User& u) {
 		cout << "Verification Failed. Unable to change password." << endl;
 }
 
-//============ UTILITY FUNCTIONS ============// 
-//- they allow for searching through the database
+
 
 //splits a string delimited by spaces and returns a vector<string> with data given from said string
 vector<string> Database::split(string s) {
@@ -257,7 +224,7 @@ vector<string> Database::split(string s) {
 	string temp("");
 	for (char c : s)
 		if (c == 32 || c == s[s.length() - 1]) {
-			if (c == s[s.length() - 1] && c > 32)
+			if (c == s[s.length() - 1] && c > 32) //if the last character is a valid character
 				temp += c;
 			if (!temp.empty())
 				v.push_back(temp);
@@ -268,25 +235,67 @@ vector<string> Database::split(string s) {
 	return v;
 }
 
-//Returns the index of the copy in the database given an ID
-int Database::getCopyByID(int id) {
-	int index = -1;
-	for (int i = 0; i < copies.size(); i++)
-		if (copies.at(i).getID() == id)
-			index = i;
-	return index;
+//Returns a vector of all IDs in the database sorted least to greatest
+vector<int> Database::getAllCopyIDs() {
+	vector<int> ids;
+	for (Copy c : copies) //load in all IDs
+		ids.push_back(c.getID());
+	//selection sort to sort IDs
+	for (int x = 0; x < ids.size() - 1; x++) {
+		int index = x;
+		for (int y = x + 1; y < ids.size(); y++)
+			if (ids[y] < ids[index]) //least to greatest
+				index = y;
+		swap(ids[x], ids[index]);
+	}
+	return ids;
 }
 
 //Returns the index of the book in the database given an ISBN
 int Database::getBookByISBN(string ISBN) {
 	int index = -1;
 	for (int i = 0; i < books.size(); i++)
-		if (books.at(i).getISBN() == ISBN)
+		if (books.at(i).getISBN() == ISBN) {
 			index = i;
+			break;
+		}
 	return index;
 }
 
-//Converts strings to lowercase
+//Returns the index of the copy in the database given an ID
+int Database::getCopyByID(int id) {
+	int index = -1;
+	for (int i = 0; i < copies.size(); i++)
+		if (copies.at(i).getID() == id) {
+			index = i;
+			break;
+		}
+	return index;
+}
+
+//Returns index of the reader in the database given a username
+int Database::getReaderByUsername(string username) {
+	int index = -1;
+	for (int i = 0; i < readers.size(); i++)
+		if (readers[i].getUsername() == username) {
+			index = i;
+			break;
+		}
+	return index;
+}
+
+//Returns index of the librarian in the database given a username
+int Database::getAdminByUsername(string username) {
+	int index = -1;
+	for (int i = 0; i < admins.size(); i++)
+		if (readers[i].getUsername() == username) {
+			index = i;
+			break;
+		}
+	return index;
+}
+
+//Converts strings to lowercase as well as returns the original string so that string class functions can still be used
 string Database::toLower(string s) {
 	string temp = "";
 	for (char c : s)

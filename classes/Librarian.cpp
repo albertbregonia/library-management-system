@@ -17,39 +17,23 @@ void Librarian::addBook(istream& in) {
 	cout << "Book Information:" << endl;
 	Book b;
 	in >> b;
-	cout << endl;
-
-	//create a New Copy of the book
-	Copy c;
-	vector<int> ids;
-	for (Copy c : Database::getCopies()) //load in all IDs
-		ids.push_back(c.getID());
-	int index;
-	for (int x = 0; x < ids.size() - 1; x++) { //selection sort to sort IDs
-		index = x;
-		for (int y = x + 1; y < ids.size(); y++)
-			if (ids[y] < ids[index]) //least to greatest
-				index = y;
-		swap(ids[x], ids[index]);
-	}
-	index = 0;
-	while (ids[index] == index) { index++; } //find the first possible unique ID
-	c.setID(index); //give the new copy a unique ID
+	Copy c; //create a New Copy of the book
+	int i = 0;
+	while (Database::getAllCopyIDs()[i] == i) i++;
+	c.setID(i); //find and set the first possible unique ID
 
 	//Find the book in the database if it already exists
-	for(int i = 0; i < Database::getBooks().size(); i++) 
-		if (Database::getBooks()[i].getISBN() == b.getISBN()) {
-			Database::getBooks()[i].setCount(Database::getBooks()[i].getCount() + 1); //increase copy count
-			c.setBook(&Database::getBooks()[i]);  //set the reference book of the copy to the one in the database already
-			Database::getCopies().push_back(c);
-			cout << endl << "Successfully created a new copy with ID #" << index << " as the book with ISBN: " << b.getISBN() << " was already found in the database." << endl << endl;
-			return;
-		}
-
-	//If no pre-existing book was found:
-	Database::getBooks().push_back(b); //add new book to database
-	c.setBook(&Database::getBooks()[Database::getBooks().size() - 1]); //set book pointer to newly added book
-	Database::getCopies().push_back(c);
+	if ((i = Database::getBookByISBN(b.getISBN())) >= 0) {
+		Database::getBooks()[i].setCount(Database::getBooks()[i].getCount() + 1); //increase copy count
+		c.setBook(&Database::getBooks()[i]);  //set the reference book of the copy to the one in the database already
+		Database::getCopies().push_back(c);
+		cout << endl << endl << "Successfully created a new copy with ID #" << i << " as the book with ISBN: " << b.getISBN() << " was already found in the database." << endl << endl;
+	}
+	else { //If no pre-existing book was found:
+		Database::getBooks().push_back(b); //add new book to database
+		c.setBook(&Database::getBooks()[Database::getBooks().size() - 1]); //set book pointer to newly added book
+		Database::getCopies().push_back(c);
+	}
 	Database::save(); //save back to text files
 }
 
@@ -58,21 +42,20 @@ void Librarian::deleteBook(istream& in) {
 	cout << "Enter the ID of the book you wish to delete: ";
 	int id;
 	in >> id;
-	if (Database::getCopyByID(id) >= 0) //Check for valid book
-		if (Database::getCopies()[Database::getCopyByID(id)].getBorrower() == "none") {
-			//Can only delete if the copy is not lent out
+	int copy;
+	if ((copy = Database::getCopyByID(id)) >= 0) //Check for valid book
+		if (Database::getCopies()[copy].getBorrower() == "none") { //Can only delete if the copy is not lent out
 			for (int i = 0; i < Database::getReaders().size(); i++) //look through all users
-				for (int z = 0; z < (Database::getReaders()[i].getReserved()).size(); z++) //look through each reserve list of each user
+				for (int z = 0; z < Database::getReaders()[i].getReserved().size(); z++) //look through each reserve list of each user
 					if (Database::getReaders()[i].getReserved()[z]->getID() == id) //if the copy exists within their reserve list, remove it
 						Database::getReaders()[i].getReserved().erase(Database::getReaders()[i].getReserved().begin() + z);
-			//Find other copies with the same book
-			bool other = false;
+			bool other = false; //Find other copies with the same book
 			for (Copy c : Database::getCopies())
-				if (other = c.getBook() == Database::getCopies()[Database::getCopyByID(id)].getBook() && c.getID() != id)
-					break;
+				if (other = c.getBook() == Database::getCopies()[copy].getBook() && c.getID() != id)
+					break; //breaks as soon as at least 1 other copy is found
 			if (!other)//if this is the last copy, delete the book as well
-				Database::getBooks().erase(Database::getBooks().begin() + Database::getBookByISBN(Database::getCopies()[Database::getCopyByID(id)].getBook()->getISBN()));
-			Database::getCopies().erase(Database::getCopies().begin() + Database::getCopyByID(id)); //delete the whole book
+				Database::getBooks().erase(Database::getBooks().begin() + Database::getBookByISBN(Database::getCopies()[copy].getBook()->getISBN()));
+			Database::getCopies().erase(Database::getCopies().begin() + copy); //delete the copy
 			cout << endl << "Successfully deleted Book with ID #" << id << endl;
 			Database::save();
 		}
@@ -88,21 +71,18 @@ void Librarian::searchUsers(istream& in) {
 	string user;
 	in >> user;
 	user = Database::toLower(user);
-	for (int i = 0; i < Database::getReaders().size(); i++)
-		if (Database::toLower(Database::getReaders()[i].getUsername()) == user) {
-			cout << Database::getReaders()[i];
-			if (i <= Database::getPartitioner())
-				cout << "Type: Student" << endl;
-			else
-				cout << "Type: Teacher" << endl;
-			return;
-		}
-	for (Librarian l : Database::getAdmins())
-		if (Database::toLower(l.getUsername()) == user) {
-			cout << l;
-			return;
-		}
-	cout << endl << "No user with those credentials were found." << endl;
+	int i;
+	if ((i=Database::getReaderByUsername(user))>=0) {
+		cout << Database::getReaders()[i];
+		if (i <= Database::getPartitioner())
+			cout << "Type: Student" << endl;
+		else
+			cout << "Type: Teacher" << endl;
+	}
+	else if ((i = Database::getAdminByUsername(user)) >= 0)
+		cout << Database::getAdmins()[i];
+	else
+		cout << endl << "No user with those credentials were found." << endl;
 }
 
 //Option 5
@@ -129,33 +109,28 @@ void Librarian::deleteUser(istream& in) {
 	string user;
 	in >> user;
 	user = Database::toLower(user);
-	if (user != getUsername()) {
-		for (int i = 0; i < Database::getReaders().size(); i++) //Student and Teacher Accounts
-			if (Database::getReaders()[i].getUsername() == user)
-				if (Database::getReaders()[i].getBorrowedBookList().empty()) { //Check if the user has not borrowed any books
-					Database::getReaders().erase(Database::getReaders().begin() + i);
-					//Delete User from Reserve List
-					for (int x = 0; x < Database::getCopies().size(); x++) //look through each copy
-						for (int y = 0; y < Database::getCopies()[x].getReservers().size(); y++) //look through the reserver of each copy
-							if (Database::getCopies()[x].getReservers()[y] == user) { //delete the user and their reserve date from the copy
-								Database::getCopies()[x].getReservers().erase(Database::getCopies()[x].getReservers().begin() + y);
-								Database::getCopies()[x].getReserveDates().erase(Database::getCopies()[x].getReserveDates().begin() + y);
-							}
-					cout << "Successfully erased - Username: " << user << endl;
-					return;
-				}
-				else {
-					cout << "Unfortunately, this user has borrowed books and cannot be deleted at the moment." << endl;
-					return;
-				}
-		for (int i = 0; i < Database::getAdmins().size(); i++) //Admin Accounts
-			if (Database::getAdmins()[i].getUsername() == user) {
-				Database::getAdmins().erase(Database::getAdmins().begin() + i);
+	int i;
+	if (user != getUsername())
+		if ((i=Database::getReaderByUsername(user))>=0)
+			if (Database::getReaders()[i].getBorrowedBookList().empty()) { //Check if the user has not borrowed any books
+				Database::getReaders().erase(Database::getReaders().begin() + i); //Delete User
+				//Delete User from Reserve Lists
+				for (int x = 0; x < Database::getCopies().size(); x++) //look through each copy
+					for (int y = 0; y < Database::getCopies()[x].getReservers().size(); y++) //look through the reserver of each copy
+						if (Database::getCopies()[x].getReservers()[y] == user) { //delete the user and their reserve date from the copy
+							Database::getCopies()[x].getReservers().erase(Database::getCopies()[x].getReservers().begin() + y);
+							Database::getCopies()[x].getReserveDates().erase(Database::getCopies()[x].getReserveDates().begin() + y);
+						}
 				cout << "Successfully erased - Username: " << user << endl;
-				return;
 			}
-		cout << endl << endl << "Could not find a user with the username: " << user << endl;
-	}
+			else
+				cout << "Unfortunately, this user has borrowed books and cannot be deleted at the moment." << endl;
+		else if ((i = Database::getAdminByUsername(user)) >= 0) {
+			Database::getAdmins().erase(Database::getAdmins().begin() + i);
+			cout << "Successfully erased - Username: " << user << endl;
+		}
+		else
+			cout << endl << endl << "Could not find a user with the username: " << user << endl;
 	else
 		cout << "You cannot delete your own account whilst signed in!" << endl;
 }

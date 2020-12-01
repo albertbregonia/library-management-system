@@ -9,7 +9,7 @@ using namespace std;
 bool UserAuthentication::signup(istream &in) {
 	cout << "What type will this user be: " << endl;
 	cout << "\t0 - Student" << endl;
-	cout << "\t1- Teacher" << endl;
+	cout << "\t1 - Teacher" << endl;
 	cout << "\t2 - Librarian/Administrator" << endl;
 	cout << endl << endl << "Choice: ";
 	int choice;
@@ -18,41 +18,38 @@ bool UserAuthentication::signup(istream &in) {
 	cout << "Please enter the desired username (Capitalization is ignored): ";
 	in >> user;
 	user = Database::toLower(user);
-	for (Reader r : Database::getReaders()) //Unique usernames are required
-		if (Database::toLower(r.getUsername()) == user)
-			return false;
-	for (Librarian l : Database::getAdmins())
-		if (Database::toLower(l.getUsername()) == user)
-			return false;
-	cout << "Please enter the desired password: ";
-	in >> pw;
-	Teacher t;
-	Student s;
-	Librarian l;
-	switch (choice) {
-	case 1:
-		t.setUsername(user);
-		t.setPassword(pw);
-		Database::getReaders().push_back(t);
-		break;
-	case 2:
-		l.setUsername(user);
-		l.setPassword(pw);
-		Database::getAdmins().push_back(l);
-		break;
-	default: //by default, users are students
-		s.setUsername(user);
-		s.setPassword(pw);
-		Database::getReaders().insert(Database::getReaders().begin() + Database::getPartitioner()+1, s);
-		Database::setPartitioner(Database::getPartitioner() + 1); //shift the partitioner over as a student was just added
-		break;
+	if (Database::getAdminByUsername(user) < 0 && Database::getReaderByUsername(user) < 0) {//Unique usernames are required
+		cout << "Please enter the desired password: ";
+		in >> pw;
+		Teacher t;
+		Student s;
+		Librarian l;
+		switch (choice) {
+		case 1:
+			t.setUsername(user);
+			t.setPassword(pw);
+			Database::getReaders().push_back(t);
+			break;
+		case 2:
+			l.setUsername(user);
+			l.setPassword(pw);
+			Database::getAdmins().push_back(l);
+			break;
+		default: //by default, users are students
+			s.setUsername(user);
+			s.setPassword(pw);
+			Database::getReaders().insert(Database::getReaders().begin() + Database::getPartitioner() + 1, s);
+			Database::setPartitioner(Database::getPartitioner() + 1); //shift the partitioner over as a student was just added
+			break;
+		}
+		Database::save(); //write out to file
+		return true;
 	}
-	Database::save(); //write out to file
-	return true;
+	return false;
 }
 
 //Attempt Login
-int UserAuthentication::login(istream &in, bool type) {
+int UserAuthentication::login(istream &in, bool& type) {
 	string user, pw;
 	cout << "Please enter your username: ";
 	in >> user;

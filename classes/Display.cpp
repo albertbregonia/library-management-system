@@ -17,7 +17,7 @@ void Display::welcome() {
 void Display::border() {cout << "=============================================" << endl << endl;}
 
 //Displays options menu for users that are logged in
-void Display::menu(bool type) {
+void Display::menu(bool& type) {
 	cout << endl;
 	border();
 	vector<string> options = { "Search for Books", "Add Books", "Delete Books", "Search for Users", "Add Users", "Delete Users", "About Me", "Change Password", "Log Out" };
@@ -34,6 +34,6 @@ void Display::menu(bool type) {
 }
 
 void Display::clrscr() {
-	for (int i = 0; i < 6; i++)
+	for (int i = 0; i < 7; i++)
 		cout << endl; //pseudo clear the screen
 }

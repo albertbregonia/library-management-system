@@ -31,13 +31,18 @@ public:
 	static vector<Copy>& getCopies();
 
 	//Utility
-	static int getCopyByID(int id);
-	static int getBookByISBN(string ISBN);
 	static vector<string> split(string s);
 	static string toLower(string s);
 	static void sort(vector<totalBookInfo>& v);
 
 	//Traverse Database
+	static vector<int> getAllCopyIDs();
+	static int getCopyByID(int id);
+	static int getBookByISBN(string ISBN);
+	static int getReaderByUsername(string username);
+	static int getAdminByUsername(string username);
+
+	//Startup
 	static bool loadBooks();
 	static bool loadAccounts();
 	static void save();

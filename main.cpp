@@ -47,8 +47,8 @@ void startup() {
 		exit(-3);
 	else if (!Database::loadAccounts())
 		exit(-4);
-	printBooks();
-	printAccounts();
+	//printBooks();
+	//printAccounts();
 }
 
 //Welcome and Login Menu
