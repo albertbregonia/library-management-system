@@ -191,30 +191,29 @@ void Reader::borrowBooks(istream& in) {
 						Database::save(); //write back to database files
 						return;
 					}
-				}
-				else //If they have a reservation on one book but another copy with a different ID is available, they can borrow it
+				} //If they have a reservation on one book but another copy with a different ID is available, they can borrow it
+				else if (!desired->getReservers().empty() && desired->getReservers()[0] == getUsername())  
 					for (int i = 0; i < Database::getCopies().size(); i++)
-						if (Database::getCopies()[i].getBook() == desired->getBook() && Database::getCopies()[i].getBorrower() == "none")
-							if (!desired->getReservers().empty() && desired->getReservers()[0] == getUsername()) {
-								//Book Modifications
-								Database::getCopies()[i].setBorrower(getUsername());
-								Database::getCopies()[i].setStartDate(Date::getDays()); //set start period to current date
-								Database::getCopies()[i].setExpirationDate(Date::getDays() + (term - res));
-								Database::getCopies()[i].setAvailability(false);
-								Database::getCopies()[i].getBook()->setCount(Database::getCopies()[i].getBook()->getCount() - 1);
+						if (Database::getCopies()[i].getBook() == desired->getBook() && Database::getCopies()[i].getBorrower() == "none"){
+							//Book Modifications
+							Database::getCopies()[i].setBorrower(getUsername());
+							Database::getCopies()[i].setStartDate(Date::getDays()); //set start period to current date
+							Database::getCopies()[i].setExpirationDate(Date::getDays() + (term - res));
+							Database::getCopies()[i].setAvailability(false);
+							Database::getCopies()[i].getBook()->setCount(Database::getCopies()[i].getBook()->getCount() - 1);
 
-								//User Modifications
-								getBorrowedBookList().push_back(&Database::getCopies()[i]); //add to borrowed book list
-								cout << endl << "As ID #" << id << " was not available, You have successfully borrowed an equivalent copy. ID #" << Database::getCopies()[i].getID() << endl << endl;
-								desired->getReservers().erase(desired->getReservers().begin()); //Remove from reserve queue
-								desired->getReserveDates().erase(desired->getReserveDates().begin());
-								for (int z = 0; z < reserved.size(); z++) //remove from user reserved vector
-									if (id == reserved[z]->getID())
-										reserved.erase(reserved.begin() + z);
-								Database::getCopies()[i] << cout; //Print recently borrowed book info
-								Database::save(); //write back to database files
-								return;
-							}
+							//User Modifications
+							getBorrowedBookList().push_back(&Database::getCopies()[i]); //add to borrowed book list
+							cout << endl << "As ID #" << id << " was not available, You have successfully borrowed an equivalent copy. ID #" << Database::getCopies()[i].getID() << endl << endl;
+							desired->getReservers().erase(desired->getReservers().begin()); //Remove from reserve queue
+							desired->getReserveDates().erase(desired->getReserveDates().begin());
+							for (int z = 0; z < reserved.size(); z++) //remove from user reserved vector
+								if (id == reserved[z]->getID())
+									reserved.erase(reserved.begin() + z);
+							Database::getCopies()[i] << cout; //Print recently borrowed book info
+							Database::save(); //write back to database files
+							return;
+						}
 				cout << "Unfortunately, this book has already been borrowed and no other copies are available. Please choose a different book." << endl;
 			}
 			else
