@@ -28,7 +28,7 @@ bool Database::loadBooks() { //Loads all the books from the database file 'book.
 	Book b = Book();
 	if (bookData.is_open())
 		while (!bookData.eof()) {
-			b >> bookData;
+			bookData >> b;
 			if (b.getTitle() != "title") //ensure a real 'book' is read in
 				books.push_back(b);
 		}
@@ -38,7 +38,7 @@ bool Database::loadBooks() { //Loads all the books from the database file 'book.
 	Copy c = Copy();
 	if (copyData.is_open())
 		while (!copyData.eof()) {
-			c >> copyData;
+			copyData >> c;
 			if (c.getID() != -2) //ensure a real 'copy' is read in
 				copies.push_back(c);
 		}
@@ -55,23 +55,24 @@ bool Database::loadAccounts() {
 	Librarian l = Librarian();
 	if (studentFile.is_open() && teacherFile.is_open() && adminFile.is_open()) {
 		while (!studentFile.eof()) { //load in readers
-			r >> studentFile;
+			studentFile >> r;
 			if (r.getUsername() != "none") //ensure a real user is read in
 				readers.push_back(r);
 		}
 		partition = readers.size() - 1; //save index of where students end in the vector
 		while (!teacherFile.eof()) { //load in teachers
-			r >> teacherFile;
+			teacherFile >> r;
 			if (r.getUsername() != "none") //ensure a real user is read in
 				readers.push_back(r);
 		}
 		while (!adminFile.eof()) { //load in admins
-			l >> adminFile;
+			adminFile >> l;
 			if (l.getUsername() != "admin") //ensure a real admin account is read in, nothing default
 				admins.push_back(l);
 		}
 	}
 	teacherFile.close();
+	studentFile.close();
 	adminFile.close();
 	return readers.size() > 0 && admins.size() > 0;
 }
@@ -86,17 +87,17 @@ void Database::save() {
 	if (studentFile.is_open() && teacherFile.is_open() && bookFile.is_open() && copyFile.is_open() && libFile.is_open()) {
 		//Save Books
 		for (Book b : books)
-			b << bookFile;
+			bookFile << b;
 		for (Copy c : copies)
-			c << copyFile;
+			copyFile << c;
 		//Save Accounts
 		for (int i = 0; i < readers.size(); i++)
 			if (i <= partition) //students
-				readers[i] << studentFile;
+				studentFile << readers[i];
 			else //teachers
-				readers[i] << teacherFile;
+				teacherFile << readers[i];
 		for (Librarian l : admins)
-			l << libFile;
+			libFile << l;
 	}
 	else
 		cout << "Error writing to database files! Please resolve this issue or contact a system administrator." << endl;
@@ -134,7 +135,7 @@ void Database::searchBooks(istream& in) {
 		Display::border();
 		for (Book b : Database::getBooks())
 			if (b.getISBN() == key) { //Find book with ISBN
-				b << cout; //Print Book Info
+				cout << b; //Print Book Info
 				cout << "***IDs: ";
 				for (Copy c : Database::getCopies()) //Find all IDs of that Book
 					if (c.getBook()->getISBN() == key)
@@ -154,7 +155,7 @@ void Database::searchBooks(istream& in) {
 			if (toLower(b.getTitle()).find(key) != string::npos) { //Find book with title or string in title
 				if (!found) //At least 1 result
 					found = true;
-				b << cout; //Print Book Info
+				cout << b; //Print Book Info
 				string t = b.getTitle();
 				cout << "***IDs: ";
 				for (Copy c : Database::getCopies()) //Find all IDs of that Book
@@ -190,7 +191,7 @@ void Database::searchBooks(istream& in) {
 		if (found){
 			sort(popularity); //selection sort based on number of reserves
 			for (totalBookInfo i : popularity) //Print books
-				i.book << cout << i.ids << endl << endl;
+				cout << i.book << i.ids << endl << endl;
 		}
 		else
 			cout << "No Results." << endl;
@@ -220,7 +221,7 @@ void Database::searchBooks(istream& in) {
 		if (found) {
 			sort(popularity); //selection sort based on number of reserves
 			for (totalBookInfo i : popularity) //Print books
-				i.book << cout << i.ids << endl << endl;
+				cout << i.book << i.ids << endl << endl;
 		}
 		else
 			cout << "No Results." << endl;

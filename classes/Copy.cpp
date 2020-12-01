@@ -46,45 +46,45 @@ void Copy::setStartDate(long start) { this->start = start; }
 void Copy::setExpirationDate(long end) { this->end = end; }
 
 //Overloaded Operators
-ostream& Copy::operator<<(ostream& out){
+ostream& operator<<(ostream& out, Copy& c){
 	string res;
-	if (reservers.empty())
+	if (c.reservers.empty())
 		res = "none";
 	else
-		for (string u : reservers)
+		for (string u : c.reservers)
 			res += u + " ";
 	string resDates;
-	if (reserveDates.empty())
+	if (c.reserveDates.empty())
 		resDates = "-1";
 	else
-		for (long l : reserveDates)
+		for (long l : c.reserveDates)
 			resDates += to_string(l) + " ";
 	if (&out == &cout) { //Console Display
-		out << "ID: " << id << endl;
-		out << "Book (ISBN): " << book->getISBN() << endl;
-		out << "Borrower: " << borrower << endl;
+		out << "ID: " << c.id << endl;
+		out << "Book (ISBN): " << c.book->getISBN() << endl;
+		out << "Borrower: " << c.borrower << endl;
 		out << "Reservers: " << res << endl;
-		out << "Available: " << available << endl;
+		out << "Available: " << c.available << endl;
 		out << "Reserve Date: " << resDates << endl;
-		out << "Borrow Date: " << start << endl;
-		out << "Expiration Date: " << end << endl;
+		out << "Borrow Date: " << c.start << endl;
+		out << "Expiration Date: " << c.end << endl;
 	}
 	else { //Write to File
-		out << endl << id << endl;
-		out << book->getISBN() << endl;
-		out << borrower << endl;
+		out << endl << c.id << endl;
+		out << c.book->getISBN() << endl;
+		out << c.borrower << endl;
 		out << res << endl;
-		out << available << endl;
+		out << c.available << endl;
 		out << resDates << endl;
-		out << start << endl;
-		out << end << endl;
+		out << c.start << endl;
+		out << c.end << endl;
 		out << "----------------";
 	}
 	return out;
 }
 
 //Reads in a single book from a stream and adds it to the book database
-istream& Copy::operator>>(istream& in) {
+istream& operator>>(istream& in, Copy& c) {
 	string line;
 	if (!in.eof())
 		for (int i = 0; i < 9; i++) {
@@ -93,34 +93,34 @@ istream& Copy::operator>>(istream& in) {
 				break;
 			switch (i) {
 			case 0:
-				id = stoi(line);
+				c.id = stoi(line);
 				break;
 			case 1:
-				book = &Database::getBooks().at(Database::getBookByISBN(line));
+				c.book = &Database::getBooks().at(Database::getBookByISBN(line));
 				break;
 			case 2:
-				borrower = line;
+				c.borrower = line;
 				break;
 			case 3:
-				reservers.clear();
+				c.reservers.clear();
 				for (string username : Database::split(line))
 					if (username != "none")
-						reservers.push_back(username);
+						c.reservers.push_back(username);
 				break;
 			case 4:
-				available = stoi(line);
+				c.available = stoi(line);
 				break;
 			case 5:
-				reserveDates.clear();
+				c.reserveDates.clear();
 				for (string date : Database::split(line))
 					if (stol(date)>=0)
-						reserveDates.push_back(stol(date));
+						c.reserveDates.push_back(stol(date));
 				break;
 			case 6:
-				start = stol(line);
+				c.start = stol(line);
 				break;
 			case 7:
-				end = stol(line);
+				c.end = stol(line);
 				break;
 			case 8: //line delimiter
 				break;

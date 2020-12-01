@@ -31,8 +31,8 @@ public:
 	void setPenalties(int penalties);
 
 	//Overloaded Operators
-	ostream& operator<<(ostream& out);
-	istream& operator>>(istream& in);
+	friend ostream& operator<<(ostream& out, Reader& r);
+	friend istream& operator>>(istream& in, Reader& r);
 	bool operator==(Reader& r);
 
 	//Readers may have penalties

@@ -21,20 +21,20 @@ void User::setUsername(string username) { this->username = username; }
 void User::setPassword(string password) { this->password = password; }
 
 //Overloaded Operators
-ostream& User::operator<<(ostream& out) {
+ostream& operator<<(ostream& out, User& u) {
 	if (&out == &cout) {
-		out << "Username: " << username << endl;
-		out << "Password: " << password << endl;
+		out << "Username: " << u.username << endl;
+		out << "Password: " << u.password << endl;
 	}
 	else {
-		out << endl << username << endl;
-		out << password << endl;
+		out << endl << u.username << endl;
+		out << u.password << endl;
 		out << "----------------";
 	}
 	return out;
 }
 
-istream& User::operator>>(istream& in) {
+istream& operator>>(istream& in, User& u) {
 	string line;
 	if (!in.eof())
 		for (int i = 0; i < 3; i++) {
@@ -43,10 +43,10 @@ istream& User::operator>>(istream& in) {
 				break;
 			switch (i) {
 			case 0:
-				username = line;
+				u.username = line;
 				break;
 			case 1:
-				password = line;
+				u.password = line;
 				break;
 			case 2: //line delimiter
 				break;

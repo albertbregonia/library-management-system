@@ -41,31 +41,31 @@ void Book::setCount(int i) { this->count = i; }
 void Book::setFavor(int i) { this->favor = i; }
 
 //Overloaded Operators
-ostream& Book::operator<<(ostream& out) const {
+ostream& operator<<(ostream& out, Book& b){
 	if (&out == &cout) { //Console Display
-		out << "ISBN: " << ISBN << endl;
-		out << "Title: " << title << endl;
-		out << "Author: " << author << endl;
-		out << "Category: " << category << endl;
-		out << "Index: " << index << endl;
-		out << "Count: " << count << endl;
-		out << "Favor: " << favor << endl;
+		out << "ISBN: " << b.ISBN << endl;
+		out << "Title: " << b.title << endl;
+		out << "Author: " << b.author << endl;
+		out << "Category: " << b.category << endl;
+		out << "Index: " << b.index << endl;
+		out << "Count: " << b.count << endl;
+		out << "Favor: " << b.favor << endl;
 	}
 	else { //Write to File
-		out << endl << ISBN << endl;
-		out << title << endl;
-		out << author << endl;
-		out << category << endl;
-		out << index << endl;
-		out << count << endl;
-		out << favor << endl;
+		out << endl << b.ISBN << endl;
+		out << b.title << endl;
+		out << b.author << endl;
+		out << b.category << endl;
+		out << b.index << endl;
+		out << b.count << endl;
+		out << b.favor << endl;
 		out << "----------------";
 	}
 	return out;
 }
 
 //Reads in a single book from a stream and adds it to the book database
-istream& Book::operator>>(istream& in) {
+istream& operator>>(istream& in, Book& b) {
 	string line;
 	if(!in.eof())
 		for (int i = 0; i < 8; i++) {
@@ -74,25 +74,25 @@ istream& Book::operator>>(istream& in) {
 				break;
 			switch (i) {
 				case 0:
-					ISBN = line;
+					b.ISBN = line;
 					break;
 				case 1:
-					title = line;
+					b.title = line;
 					break;
 				case 2:
-					author = line;
+					b.author = line;
 					break;
 				case 3:
-					category = line;
+					b.category = line;
 					break;
 				case 4:
-					index = line;
+					b.index = line;
 					break;
 				case 5:
-					count = stoi(line);
+					b.count = stoi(line);
 					break;
 				case 6:
-					favor = stoi(line);
+					b.favor = stoi(line);
 					break;
 				case 7: //line delimiter
 					break;

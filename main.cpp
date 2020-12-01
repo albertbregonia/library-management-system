@@ -12,18 +12,18 @@ using namespace std;
 //Debug Functions
 void printBooks() { //Test Overloaded Operators
 	for (Book b : Database::getBooks())
-		b << cout << endl;
+		cout << b << endl;
 	cout << "\n\n\n\n";
 	for (Copy c : Database::getCopies())
-		c << cout << endl;
+		cout << c << endl;
 	cout << "\n\n\n\n";
 }
 
 void printAccounts() { //Test overloaded operators for accounts
 	for (Reader r : Database::getReaders())
-		r << cout << endl;
+		cout << r << endl;
 	for (Librarian l : Database::getAdmins())
-		l << cout << endl;
+		cout << l << endl;
 }
 
 //Setup
@@ -47,6 +47,8 @@ void startup() {
 		exit(-3);
 	else if (!Database::loadAccounts())
 		exit(-4);
+	printBooks();
+	printAccounts();
 }
 
 //Welcome and Login Menu
@@ -113,9 +115,9 @@ void gui(bool type) {
 			break;
 		case 7:
 			if(type) //About Me for Admin
-				Database::getReaders().at(current) << cout;
+				cout << Database::getReaders().at(current);
 			else
-				Database::getAdmins().at(current) << cout;
+				cout << Database::getAdmins().at(current);
 			break;
 		case 8:
 			if (type) //Change Password for Student/Teacher

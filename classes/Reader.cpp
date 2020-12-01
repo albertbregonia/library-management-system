@@ -35,8 +35,48 @@ void Reader::setBorrowed(vector<Copy*> borrowed) { this->borrowed = borrowed; }
 void Reader::setPenalties(int penalties) { this->penalties = penalties; }
 void Reader::setReserved(vector<Copy*> reserved) { this->reserved = reserved; }
 
+//Write to ostream
+ostream& operator<<(ostream& out, Reader& r) {
+	if (&out == &cout) { //Console Display
+		out << "Username: " << r.getUsername() << endl;
+		out << "Password: " << r.getPassword() << endl;
+		out << "Borrow Period: " << r.term << endl;
+		out << "Max Number of Books you are able to Borrow: " << r.max << endl;
+		out << "Penalty: " << r.penalties << endl;
+		out << "Currently Borrowed Books: " << endl << endl;
+		for (Copy* c : r.borrowed) {
+			out << *c;
+			out << endl;
+		}
+		out << "Currently Reserved Books: " << endl << endl;
+		for (Copy* c : r.reserved) {
+			out << *c;
+			out << endl;
+		}
+	}
+	else { //Write to File
+		out << endl << r.getUsername() << endl;
+		out << r.getPassword() << endl;
+		out << r.term << endl;
+		out << r.max << endl;
+		if (!r.borrowed.empty())
+			for (Copy* c : r.borrowed) //puts all books IDs on a line delimited by a space
+				out << c->getID() << " ";
+		else
+			out << -1 << " "; //Indicates no books borrowed
+		out << endl << r.penalties << endl;
+		if (!r.reserved.empty())
+			for (Copy* c : r.reserved) //puts all books IDs on a line delimited by a space
+				out << c->getID() << " ";
+		else
+			out << -1 << " "; //Indicates no books borrowed
+		out << endl << "----------------";
+	}
+	return out;
+}
+
 //Reads in a single reader from an istream and adds it to the database
-istream& Reader::operator>>(istream& in) {
+istream& operator>>(istream& in, Reader& r) {
 	string line;
 	if (!in.eof())
 		for (int i = 0; i < 8; i++) {
@@ -45,31 +85,31 @@ istream& Reader::operator>>(istream& in) {
 				break;
 			switch (i) {
 			case 0:
-				setUsername(line);
+				r.setUsername(line);
 				break;
 			case 1:
-				setPassword(line);
+				r.setPassword(line);
 				break;
 			case 2:
-				term = stoi(line);
+				r.term = stoi(line);
 				break;
 			case 3:
-				max = stoi(line);
+				r.max = stoi(line);
 				break;
 			case 4:
-				borrowed.clear();
+				r.borrowed.clear();
 				for (string id : Database::split(line))
 					if (stoi(id) > 0)
-						borrowed.push_back(&Database::getCopies().at(Database::getCopyByID(stoi(id))));
+						r.borrowed.push_back(&Database::getCopies().at(Database::getCopyByID(stoi(id))));
 				break;
 			case 5:
-				penalties = stoi(line);
+				r.penalties = stoi(line);
 				break;
 			case 6:
-				reserved.clear();
+				r.reserved.clear();
 				for (string id : Database::split(line))
 					if (stoi(id) > 0)
-						reserved.push_back(&Database::getCopies().at(Database::getCopyByID(stoi(id))));
+						r.reserved.push_back(&Database::getCopies().at(Database::getCopyByID(stoi(id))));
 				break;
 			case 7:
 				//line delimiter
@@ -77,46 +117,6 @@ istream& Reader::operator>>(istream& in) {
 			}
 		}
 	return in;
-}
-
-//Write to ostream
-ostream& Reader::operator<<(ostream& out) {
-	if (&out == &cout) { //Console Display
-		out << "Username: " << getUsername() << endl;
-		out << "Password: " << getPassword() << endl;
-		out << "Borrow Period: " << term << endl;
-		out << "Max Number of Books you are able to Borrow: " << max << endl;
-		out << "Penalty: " << penalties << endl;
-		out << "Currently Borrowed Books: " << endl << endl;
-		for (Copy* c : borrowed) {
-			*c << out;
-			out << endl;
-		}
-		out << "Currently Reserved Books: " << endl << endl;
-		for (Copy* c : reserved) {
-			*c << out;
-			out << endl;
-		}
-	}
-	else { //Write to File
-		out << endl << getUsername() << endl;
-		out << getPassword() << endl;
-		out << term << endl;
-		out << max << endl;
-		if (!borrowed.empty())
-			for (Copy* c : borrowed) //puts all books IDs on a line delimited by a space
-				out << c->getID() << " ";
-		else
-			out << -1 << " "; //Indicates no books borrowed
-		out << endl << penalties << endl;
-		if (!reserved.empty())
-			for (Copy* c : reserved) //puts all books IDs on a line delimited by a space
-				out << c->getID() << " ";
-		else
-			out << -1 << " "; //Indicates no books borrowed
-		out << endl << "----------------";
-	}
-	return out;
 }
 
 bool Reader::operator==(Reader& r) { return getUsername() == r.getUsername() && getPassword() == r.getPassword(); }
@@ -187,7 +187,7 @@ void Reader::borrowBooks(istream& in) {
 								if (id == reserved[z]->getID())
 									reserved.erase(reserved.begin() + z);
 						}
-						*desired << cout; //Print recently borrowed book info
+						cout << *desired; //Print recently borrowed book info
 						Database::save(); //write back to database files
 						return;
 					}
@@ -210,7 +210,7 @@ void Reader::borrowBooks(istream& in) {
 							for (int z = 0; z < reserved.size(); z++) //remove from user reserved vector
 								if (id == reserved[z]->getID())
 									reserved.erase(reserved.begin() + z);
-							Database::getCopies()[i] << cout; //Print recently borrowed book info
+							cout << Database::getCopies()[i]; //Print recently borrowed book info
 							Database::save(); //write back to database files
 							return;
 						}
@@ -243,7 +243,7 @@ void Reader::returnBooks(istream& in) {
 				getBorrowedBookList().erase(getBorrowedBookList().begin() + i); //remove from borrowed list
 				Database::save(); //write back to database files
 				cout << endl << "Successfully returned Book #" << id << endl << endl << endl;
-				*desired << cout; //Print recently returned book info
+				cout << *desired; //Print recently returned book info
 				return;
 			}
 		cout << "Error. You have not borrowed a book with the ID #" << id << endl;
@@ -280,7 +280,7 @@ void Reader::reserveBooks(istream& in) {
 				desired->getReserveDates().push_back(desired->getReserveDates()[desired->getReserveDates().size() - 1] + 5);
 			cout << "Successfully reserved the following book:" << endl << endl;
 			reserved.push_back(desired);
-			*reserved[reserved.size()-1] << cout; //check if it was correctly saved in user vector
+			cout << *reserved[reserved.size()-1]; //check if it was correctly saved in user vector
 			cout << "Reserve Date is: " << desired->getReserveDates()[desired->getReserveDates().size() - 1] << endl;
 		}
 		else
@@ -305,7 +305,7 @@ void Reader::cancelReserve(istream& in) {
 						reserved.erase(reserved.begin() + z);
 				Database::save();
 				cout << "Successfully Cancelled Reservation on: " << endl;
-				*desired << cout;
+				cout << *desired;
 				return;
 			}
 		cout << "You do not currently have a reservation on ID #" << id << endl;
@@ -325,7 +325,7 @@ void Reader::renewBooks(istream& in) {
 				Copy* desired = &Database::getCopies()[Database::getCopyByID(id)];
 				desired->setExpirationDate(desired->getExpirationDate() + term);
 				cout << "Successfully Renewed ID #" << id << endl;
-				*desired << cout;
+				cout << *desired;
 				return;
 			}
 			else

@@ -38,6 +38,6 @@ public:
 	void setFavor(int i);
 
 	//Overloaded Operators
-	ostream& operator<<(ostream& out) const;
-	istream& operator>>(istream& in);
+	friend ostream& operator<<(ostream& out, Book& b);
+	friend istream& operator>>(istream& in, Book& b);
 };

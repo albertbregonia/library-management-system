@@ -38,6 +38,6 @@ public:
 	void setExpirationDate(long end);
 
 	//Overloaded Operators
-	ostream& operator<<(ostream& out);
-	istream& operator>>(istream& in);
+	friend ostream& operator<<(ostream& out, Copy& c);
+	friend istream& operator>>(istream& in, Copy& c);
 };

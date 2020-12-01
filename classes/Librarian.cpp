@@ -16,7 +16,7 @@ void Librarian::addBook(istream& in) {
 	cout << "If this is a new book that has not been in the database, these are the default parameters." << endl << endl;
 	cout << "Book Information:" << endl;
 	Book b;
-	b >> in;
+	in >> b;
 	cout << endl;
 
 	//create a New Copy of the book
@@ -90,7 +90,7 @@ void Librarian::searchUsers(istream& in) {
 	user = Database::toLower(user);
 	for (int i = 0; i < Database::getReaders().size(); i++)
 		if (Database::toLower(Database::getReaders()[i].getUsername()) == user) {
-			Database::getReaders()[i] << cout;
+			cout << Database::getReaders()[i];
 			if (i <= Database::getPartitioner())
 				cout << "Type: Student" << endl;
 			else
@@ -99,7 +99,7 @@ void Librarian::searchUsers(istream& in) {
 		}
 	for (Librarian l : Database::getAdmins())
 		if (Database::toLower(l.getUsername()) == user) {
-			l << cout;
+			cout << l;
 			return;
 		}
 	cout << endl << "No user with those credentials were found." << endl;
@@ -113,11 +113,11 @@ void Librarian::addUser(istream& in) {
 	if (UserAuthentication::signup(in)) {
 		cout << "Successfully generated new user." << endl << endl;
 		if (Database::getAdmins().size() > libSize) //Print New Admin
-			Database::getAdmins()[Database::getAdmins().size() - 1] << cout;
+			cout << Database::getAdmins()[Database::getAdmins().size() - 1];
 		else if (Database::getPartitioner() > oldPart) //Print New Student
-			Database::getReaders()[oldPart + 1] << cout;
+			cout << Database::getReaders()[oldPart + 1];
 		else //Print New Teacher
-			Database::getReaders()[Database::getReaders().size() - 1] << cout;
+			cout << Database::getReaders()[Database::getReaders().size() - 1];
 	}
 	else
 		cout << "Failed to create new user. Username is already in use." << endl;
