@@ -144,6 +144,10 @@ void Librarian::deleteUser(istream& in) {
 					cout << "Successfully erased - Username: " << user << endl;
 					return;
 				}
+				else {
+					cout << "Unfortunately, this user has borrowed books and cannot be deleted at the moment." << endl;
+					return;
+				}
 		for (int i = 0; i < Database::getAdmins().size(); i++) //Admin Accounts
 			if (Database::getAdmins()[i].getUsername() == user) {
 				Database::getAdmins().erase(Database::getAdmins().begin() + i);
