@@ -63,7 +63,7 @@ void Librarian::deleteBook(istream& in) {
 			//Can only delete if the copy is not lent out
 			for (int i = 0; i < Database::getReaders().size(); i++) //look through all users
 				for (int z = 0; z < (Database::getReaders()[i].getReserved()).size(); z++) //look through each reserve list of each user
-					if (Database::getReaders()[i].getReserved()[z].getID() == id) //if the copy exists within their reserve list, remove it
+					if (Database::getReaders()[i].getReserved()[z]->getID() == id) //if the copy exists within their reserve list, remove it
 						Database::getReaders()[i].getReserved().erase(Database::getReaders()[i].getReserved().begin() + z);
 			//Find other copies with the same book
 			bool other = false;

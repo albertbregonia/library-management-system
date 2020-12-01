@@ -7,5 +7,5 @@ class Student : public Reader {
 public:
 	//Constructors
 	Student();
-	Student(string username, string password, int term, int max, vector<Copy> borrowed, vector<Copy> reserved);
+	Student(string username, string password, int term, int max, vector<Copy*> borrowed, vector<Copy*> reserved);
 };

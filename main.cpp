@@ -122,6 +122,7 @@ void gui(bool type) {
 				Database::changePassword(cin, Database::getReaders().at(current));
 			else //Change Password for Admin
 				Database::changePassword(cin, Database::getAdmins().at(current));
+			Database::save();
 			break;
 		default: //Invalid Input
 			cout << "Invalid selection. Please enter a valid ID." << endl;
