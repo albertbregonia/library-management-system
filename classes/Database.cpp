@@ -137,7 +137,8 @@ void Database::searchBooks(istream& in) {
 		Display::border();
 	}
 	switch (choice) {
-	case -1:
+	case -1: //Cancel
+		cout << "Returning to main menu..." << endl;
 		break;
 	case 0: //ISBN Search
 		for (Book b : Database::getBooks())
