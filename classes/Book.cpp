@@ -100,3 +100,4 @@ istream& operator>>(istream& in, Book& b) {
 		}
 	return in;
 }
+

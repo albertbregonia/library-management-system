@@ -19,7 +19,7 @@ void Librarian::addBook(istream& in) {
 	in >> b;
 	Copy c; //create a New Copy of the book
 	int i = 0;
-	while (Database::getAllCopyIDs()[i] == i) i++;
+	while (Database::getAllIDs()[i] == i) i++;
 	c.setID(i); //find and set the first possible unique ID
 
 	//Find the book in the database if it already exists
@@ -43,24 +43,23 @@ void Librarian::deleteBook(istream& in) {
 	int id;
 	in >> id;
 	int copy;
-	if ((copy = Database::getCopyByID(id)) >= 0) //Check for valid book
+	if ((copy = Database::getCopyByID(id)) >= 0) { //Check for valid book
 		if (Database::getCopies()[copy].getBorrower() == "none") { //Can only delete if the copy is not lent out
-			for (int i = 0; i < Database::getReaders().size(); i++) //look through all users
-				for (int z = 0; z < Database::getReaders()[i].getReserved().size(); z++) //look through each reserve list of each user
-					if (Database::getReaders()[i].getReserved()[z]->getID() == id) //if the copy exists within their reserve list, remove it
-						Database::getReaders()[i].getReserved().erase(Database::getReaders()[i].getReserved().begin() + z);
-			bool other = false; //Find other copies with the same book
-			for (Copy c : Database::getCopies())
-				if (other = c.getBook() == Database::getCopies()[copy].getBook() && c.getID() != id)
-					break; //breaks as soon as at least 1 other copy is found
-			if (!other)//if this is the last copy, delete the book as well
-				Database::getBooks().erase(Database::getBooks().begin() + Database::getBookByISBN(Database::getCopies()[copy].getBook()->getISBN()));
+			int pos;
+			Copy* desired = &Database::getCopies()[copy];
+			for (int i = 0; i < Database::getReaders().size(); i++) //look through all users and delete
+				if ((pos = Database::getCopyInReserveList(Database::getReaders()[i], id)) >= 0)
+					Database::deleteReserver(Database::getReaders()[i], *desired, pos);
+
+			if (!Database::getAllCopiesByISBN(desired->getBook()->getISBN()).size()==1)//if this is the last copy, delete the book as well
+				Database::getBooks().erase(Database::getBooks().begin() + Database::getBookByISBN(desired->getBook()->getISBN()));
 			Database::getCopies().erase(Database::getCopies().begin() + copy); //delete the copy
 			cout << endl << "Successfully deleted Book with ID #" << id << endl;
 			Database::save();
 		}
 		else
 			cout << "Unable to delete book. This copy has already been lent out to a reader." << endl;
+	}	
 	else
 		cout << endl << "Book with ID #" << id << " was not found." << endl;
 }
@@ -70,7 +69,6 @@ void Librarian::searchUsers(istream& in) {
 	cout << "Enter the username of the user you wish to print data from: ";
 	string user;
 	in >> user;
-	user = Database::toLower(user);
 	int i;
 	if ((i=Database::getReaderByUsername(user))>=0) {
 		cout << Database::getReaders()[i];
@@ -115,12 +113,10 @@ void Librarian::deleteUser(istream& in) {
 			if (Database::getReaders()[i].getBorrowedBookList().empty()) { //Check if the user has not borrowed any books
 				Database::getReaders().erase(Database::getReaders().begin() + i); //Delete User
 				//Delete User from Reserve Lists
-				for (int x = 0; x < Database::getCopies().size(); x++) //look through each copy
-					for (int y = 0; y < Database::getCopies()[x].getReservers().size(); y++) //look through the reserver of each copy
-						if (Database::getCopies()[x].getReservers()[y] == user) { //delete the user and their reserve date from the copy
-							Database::getCopies()[x].getReservers().erase(Database::getCopies()[x].getReservers().begin() + y);
-							Database::getCopies()[x].getReserveDates().erase(Database::getCopies()[x].getReserveDates().begin() + y);
-						}
+				int pos;
+				for (int x = 0; x < Database::getCopies().size(); x++) //look through each copy and delete the user
+					if ((pos = Database::getUserInReservers(Database::getCopies()[x], user)) >= 0)
+						Database::deleteReserver(Database::getReaders()[i], Database::getCopies()[x], pos);
 				cout << "Successfully erased - Username: " << user << endl;
 			}
 			else

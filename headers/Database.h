@@ -36,11 +36,19 @@ public:
 	static void sort(vector<totalBookInfo>& v);
 
 	//Traverse Database
-	static vector<int> getAllCopyIDs();
+	static vector<int> getAllIDs();
+	static vector<Copy*> getAllCopiesByISBN(string ISBN);
+	static vector<Copy*> getAllCopiesByTitle(string title);
+	static vector<Book*> getTopRated();
+	static int getBookPopularity(string ISBN);
 	static int getCopyByID(int id);
 	static int getBookByISBN(string ISBN);
 	static int getReaderByUsername(string username);
 	static int getAdminByUsername(string username);
+	static int getUserInReservers(Copy& c, string username);
+	static int getCopyInBorrowedList(Reader& r, int id);
+	static int getCopyInReserveList(Reader& r, int id);
+	static void deleteReserver(Reader& r, Copy& c, int pos);
 
 	//Startup
 	static bool loadBooks();

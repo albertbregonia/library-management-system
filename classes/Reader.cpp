@@ -152,7 +152,7 @@ bool Reader::isOverdue(Copy* c) {
 	return false;
 }
 
-//Option 2 - Borrow Books --- Only Issue is Reserve Dates
+//Option 2 - Borrow Books
 void Reader::borrowBooks(istream& in) {
 	if (!anyOverdue()) //Check for overdue
 		if (getMaxCopies() > getBorrowedBookList().size()) { //Check if they haven't checked out more than their maximum
@@ -161,13 +161,8 @@ void Reader::borrowBooks(istream& in) {
 			in >> id;
 			if (Database::getCopyByID(id) >= 0) { //Check for invalid ID
 				Copy* desired = &Database::getCopies().at(Database::getCopyByID(id)); //A pointer is used here to modify the value directly in the database instead of a copy of the value
-				
-				int res = 0; //total number of reservations
-				for (Copy c : Database::getCopies())
-					if (c.getBook() == desired->getBook())
-						res += c.getReservers().size();
+				int res = Database::getBookPopularity(desired->getBook()->getISBN()); //total number of reservations
 				res = floor(res / 20); //every 20 reservees the borrow period goes down by 1
-
 				if (desired->getBorrower() == "none") { //If nobody has borrowed the book, set the book's information to that of the borrower
 					if (desired->getReservers().empty() || desired->getReservers()[0] == getUsername()) { //If no reservations or current reserver
 						//Book Modifications
@@ -180,37 +175,29 @@ void Reader::borrowBooks(istream& in) {
 						//User Modifications
 						getBorrowedBookList().push_back(desired); //add to borrowed book list
 						cout << endl << "Successfully borrowed Book #" << id << endl << endl << endl;
-						if (!desired->getReservers().empty() && desired->getReservers()[0] == getUsername()) {
-							desired->getReservers().erase(desired->getReservers().begin()); //Remove from reserve queue
-							desired->getReserveDates().erase(desired->getReserveDates().begin());
-							for (int z = 0; z < reserved.size(); z++) //remove from user reserved vector
-								if (id == reserved[z]->getID())
-									reserved.erase(reserved.begin() + z);
-						}
+						if (!desired->getReservers().empty() && desired->getReservers()[0] == getUsername())
+							Database::deleteReserver(*this, *desired, 0); //delete
 						cout << *desired; //Print recently borrowed book info
 						Database::save(); //write back to database files
 						return;
 					}
 				} //If they have a reservation on one book but another copy with a different ID is available, they can borrow it
 				else if (!desired->getReservers().empty() && desired->getReservers()[0] == getUsername())  
-					for (int i = 0; i < Database::getCopies().size(); i++)
-						if (Database::getCopies()[i].getBook() == desired->getBook() && Database::getCopies()[i].getBorrower() == "none"){
+					for (Copy* c:Database::getAllCopiesByISBN(desired->getBook()->getISBN()))
+						if (c->getBorrower() == "none"){
 							//Book Modifications
-							Database::getCopies()[i].setBorrower(getUsername());
-							Database::getCopies()[i].setStartDate(Date::getDays()); //set start period to current date
-							Database::getCopies()[i].setExpirationDate(Date::getDays() + (term - res));
-							Database::getCopies()[i].setAvailability(false);
-							Database::getCopies()[i].getBook()->setCount(Database::getCopies()[i].getBook()->getCount() - 1);
+							c->setBorrower(getUsername());
+							c->setStartDate(Date::getDays()); //set start period to current date
+							c->setExpirationDate(Date::getDays() + (term - res));
+							c->setAvailability(false);
+							c->getBook()->setCount(c->getBook()->getCount() - 1);
 
 							//User Modifications
-							getBorrowedBookList().push_back(&Database::getCopies()[i]); //add to borrowed book list
-							cout << endl << "As ID #" << id << " was not available, You have successfully borrowed an equivalent copy. ID #" << Database::getCopies()[i].getID() << endl << endl;
-							desired->getReservers().erase(desired->getReservers().begin()); //Remove from reserve queue
-							desired->getReserveDates().erase(desired->getReserveDates().begin());
-							for (int z = 0; z < reserved.size(); z++) //remove from user reserved vector
-								if (id == reserved[z]->getID())
-									reserved.erase(reserved.begin() + z);
-							cout << Database::getCopies()[i]; //Print recently borrowed book info
+							getBorrowedBookList().push_back(c); //add to borrowed book list
+							cout << endl << "As ID #" << id << " was not available, You have successfully borrowed an equivalent copy. ID #" << c << endl << endl;
+							Database::deleteReserver(*this, *desired, 0); //delete
+							reserved.erase(reserved.begin() + Database::getCopyInReserveList(*this, id));
+							cout << c; //Print recently borrowed book info
 							Database::save(); //write back to database files
 							return;
 						}
@@ -230,23 +217,23 @@ void Reader::returnBooks(istream& in) {
 	in >> id;
 	if (Database::getCopyByID(id) >= 0) { //Check for invalid ID
 		Copy* desired = &Database::getCopies()[Database::getCopyByID(id)]; //A pointer is used here to modify the value directly in the database instead of a copy of the value
-		for (int i = 0; i < getBorrowedBookList().size(); i++)
-			if (getBorrowedBookList()[i]->getID() == id) { //Check if the user has borrowed a book with the given ID
-				anyOverdue(); //remove overdue reservations
-				isOverdue(desired); //Check for penalty and issue penalty if a book is overdue
-				//Reset Book attributes
-				desired->setBorrower("none");
-				desired->setStartDate(0);
-				desired->setExpirationDate(0);
-				desired->setAvailability(true);
-				desired->getBook()->setCount(desired->getBook()->getCount() + 1);
-				getBorrowedBookList().erase(getBorrowedBookList().begin() + i); //remove from borrowed list
-				cout << endl << "Successfully returned Book #" << id << endl << endl << endl;
-				cout << *desired; //Print recently returned book info
-				Database::save(); //write back to database files
-				return;
-			}
-		cout << "Error. You have not borrowed a book with the ID #" << id << endl;
+		int pos = Database::getCopyInBorrowedList(*this, id);
+		if (pos >= 0) {
+			anyOverdue(); //remove overdue reservations
+			isOverdue(desired); //Check for penalty and issue penalty if a book is overdue
+			//Reset Book attributes
+			desired->setBorrower("none");
+			desired->setStartDate(0);
+			desired->setExpirationDate(0);
+			desired->setAvailability(true);
+			desired->getBook()->setCount(desired->getBook()->getCount() + 1);
+			getBorrowedBookList().erase(getBorrowedBookList().begin() + pos); //remove from borrowed list
+			cout << endl << "Successfully returned Book #" << id << endl << endl << endl;
+			cout << *desired; //Print recently returned book info
+			Database::save(); //write back to database files
+		}
+		else
+			cout << "Error. You have not borrowed a book with the ID #" << id << endl;
 	}
 	else
 		cout << "ID #"<< id << " does not exist within our database." << endl;
@@ -261,27 +248,25 @@ void Reader::reserveBooks(istream& in) {
 		in >> id;
 		if (Database::getCopyByID(id) >= 0) { //Check if the copy exists in the database
 			Copy* desired = &Database::getCopies()[Database::getCopyByID(id)];
-			for (string user : desired->getReservers()) //Check for existing reservation
-				if (user == getUsername()) {
-					cout << "You already have an existing reservation. " << endl;
-					return;
+			if (Database::getCopyInBorrowedList(*this, id) < 0) //reader has not borrowed this book
+				if (Database::getUserInReservers(*desired, getUsername()) < 0) { //reader has not reserved this book
+					desired->getReservers().push_back(getUsername()); //push to reservee vector
+					if (desired->getReserveDates().empty()) //If this is the first reserver, their reserve date is 5 days after the current borrower's expiration date
+						if (desired->getBorrower() != "none")
+							desired->getReserveDates().push_back(desired->getExpirationDate() + 5);
+						else //If there is no current borrower the reserve date is 5 days from now
+							desired->getReserveDates().push_back(Date::getDays() + 5);
+					else //If this is not the first reserver, the date is 5 days after the previous reservee's reservation date
+						desired->getReserveDates().push_back(desired->getReserveDates()[desired->getReserveDates().size() - 1] + 5);
+					cout << "Successfully reserved the following book:" << endl << endl;
+					reserved.push_back(desired);
+					cout << *reserved[reserved.size() - 1]; //check if it was correctly saved in user vector
+					cout << "Reserve Date is: " << desired->getReserveDates()[desired->getReserveDates().size() - 1] << endl;
 				}
-			if (desired->getBorrower() == getUsername()) { //Check if user is the current borrower
+				else
+					cout << "You already have an existing reservation. " << endl;
+			else
 				cout << "You cannot reserve a book that you have already borrowed. However, you may renew this book." << endl;
-				return;
-			}
-			desired->getReservers().push_back(getUsername()); //push to reservee vector
-			if (desired->getReserveDates().empty()) //If this is the first reserver, their reserve date is 5 days after the current borrower's expiration date
-				if(desired->getBorrower()!="none")
-					desired->getReserveDates().push_back(desired->getExpirationDate() + 5);
-				else //If there is no current borrower the reserve date is 5 days from now
-					desired->getReserveDates().push_back(Date::getDays() + 5);
-			else //If this is not the first reserver, the date is 5 days after the previous reservee's reservation date
-				desired->getReserveDates().push_back(desired->getReserveDates()[desired->getReserveDates().size() - 1] + 5);
-			cout << "Successfully reserved the following book:" << endl << endl;
-			reserved.push_back(desired);
-			cout << *reserved[reserved.size()-1]; //check if it was correctly saved in user vector
-			cout << "Reserve Date is: " << desired->getReserveDates()[desired->getReserveDates().size() - 1] << endl;
 		}
 		else
 			cout << "The desired book with the ID #" << id << " was not found in the database." << endl;
@@ -295,20 +280,16 @@ void Reader::cancelReserve(istream& in) {
 	int id;
 	in >> id;
 	if (Database::getCopyByID(id) >= 0) {
-		for (int i = 0; i < Database::getCopies()[Database::getCopyByID(id)].getReservers().size(); i++)
-			if (Database::getCopies()[Database::getCopyByID(id)].getReservers()[i] == getUsername()) { //find the username in the reserve vector
-				Copy* desired = &Database::getCopies()[Database::getCopyByID(id)];
-				desired->getReservers().erase(desired->getReservers().begin() + i); //delete from reserve vector
-				desired->getReserveDates().erase(desired->getReserveDates().begin() + i); //delete respective reserve date
-				for (int z = 0; z < reserved.size(); z++) //remove from user reserved vector
-					if (id == reserved[z]->getID())
-						reserved.erase(reserved.begin() + z);
-				Database::save();
-				cout << "Successfully Cancelled Reservation on: " << endl;
-				cout << *desired;
-				return;
-			}
-		cout << "You do not currently have a reservation on ID #" << id << endl;
+		Copy* desired = &Database::getCopies()[Database::getCopyByID(id)];
+		int pos = Database::getUserInReservers(*desired, getUsername());
+		if (pos>=0) {
+			Database::deleteReserver(*this, *desired, pos);
+			Database::save();
+			cout << "Successfully Cancelled Reservation on: " << endl;
+			cout << *desired;
+		}
+		else
+			cout << "You do not currently have a reservation on ID #" << id << endl;
 	}
 	else
 		cout << "The desired book with the ID #" << id << " was not found in the database." << endl;
@@ -320,9 +301,10 @@ void Reader::renewBooks(istream& in) {
 		cout << "Enter the ID of the book you wish to renew: ";
 		int id;
 		in >> id;
-		if (Database::getCopyByID(id) >= 0) //If the ID is valid, the reservation list is empty and the current reader is the borrower
-			if (Database::getCopies()[Database::getCopyByID(id)].getReservers().empty() && Database::getCopies()[Database::getCopyByID(id)].getBorrower() == getUsername()) {
-				Copy* desired = &Database::getCopies()[Database::getCopyByID(id)];
+		int pos = Database::getCopyByID(id);
+		if (pos >= 0) //If the ID is valid, the reservation list is empty and the current reader is the borrower
+			if (Database::getCopies()[pos].getReservers().empty() && Database::getCopies()[pos].getBorrower() == getUsername()) {
+				Copy* desired = &Database::getCopies()[pos];
 				desired->setExpirationDate(desired->getExpirationDate() + term);
 				cout << "Successfully Renewed ID #" << id << endl;
 				cout << *desired;

@@ -22,7 +22,9 @@ vector<Librarian>& Database::getAdmins() { return admins; }
 void Database::setPartitioner(int i) { partition = i; }
 
 //Startup
-bool Database::loadBooks() { //Loads all the books from the database file 'book.txt' and 'copies.txt'
+bool Database::loadBooks() { 
+	//Loads all the books from the database file 'book.txt' and 'copies.txt'
+
 	//Load Types of Books
 	fstream bookData("data\\book.txt");
 	Book b = Book();
@@ -43,6 +45,9 @@ bool Database::loadBooks() { //Loads all the books from the database file 'book.
 				copies.push_back(c);
 		}
 	copyData.close();
+	//Ensure count is correct
+	for (int i = 0; i < books.size(); i++)
+		books[i].setCount(getAllCopiesByISBN(books[i].getISBN()).size());
 	return Database::books.size() > 0 && Database::copies.size() > 0;
 }
 
@@ -108,6 +113,8 @@ void Database::save() {
 	libFile.close();
 }
 
+
+
 //============ USERS FUNCTIONS ============// 
 
 //Option 1 
@@ -132,7 +139,7 @@ void Database::searchBooks(istream& in) {
 	if (choice >= 0 && choice < 4) { //User Input
 		cout << "Enter [" << keys[choice] << "] to search for: ";
 		getline(in >> ws, key); // 'in >> ws' is used to include whitespace
-		key = toLower(key); //lowercase for better results
+		key = toLower(key); 
 		cout << endl;
 		Display::border();
 	}
@@ -141,29 +148,26 @@ void Database::searchBooks(istream& in) {
 		cout << "Returning to main menu..." << endl;
 		break;
 	case 0: //ISBN Search
-		for (Book b : Database::getBooks())
+		for (Book b : books)
 			if (b.getISBN() == key) { //Find book with ISBN
 				cout << b; //Print Book Info
 				cout << "***IDs: ";
-				for (Copy c : Database::getCopies()) //Find all IDs of that Book
-					if (c.getBook()->getISBN() == key)
-						cout << c.getID() << " ";
+				for (Copy* c : getAllCopiesByISBN(b.getISBN())) //Find all IDs of that Book
+					cout << c->getID() << " ";
 				cout << endl << endl;
 				return; //There is only 1 ISBN per book
 			}
 		cout << "No Results." << endl;
 		break;
 	case 1: //Title Search
-		for (Book b : Database::getBooks())
+		for (Book b : books)
 			if (toLower(b.getTitle()).find(key) != string::npos) { //Find book with title or string in title
 				if (!found) //At least 1 result
 					found = true;
 				cout << b; //Print Book Info
-				string t = b.getTitle();
 				cout << "***IDs: ";
-				for (Copy c : Database::getCopies()) //Find all IDs of that Book and print
-					if (c.getBook()->getTitle() == t)
-						cout << c.getID() << " ";
+				for (Copy* c : getAllCopiesByTitle(b.getTitle())) //Find all IDs of that Book and print
+					cout << c->getID() << " ";
 				cout << endl << endl;
 			}
 		if(!found)
@@ -171,20 +175,17 @@ void Database::searchBooks(istream& in) {
 		break;
 	case 2: //Author Based Search
 	case 3: //Category Based Search - As choices 2 and 3 carry out the same algorithm an if statement is used to simplify code
-		for (Book b : Database::getBooks())
+		for (Book b : books)
 			if ((choice == 2 && toLower(b.getAuthor()).find(key) != string::npos) || //Find book with author or string in author if 2
 				(choice == 3 && toLower(b.getCategory()).find(key) != string::npos)) { //Find book with category or string in category if 3
 				if (!found) //At least 1 result
 					found = true;
 				totalBookInfo temp; //Save Book, IDs and Reserve Count for each copy
 				temp.book = b;
-				string t = b.getTitle();
 				temp.ids = "***IDs: ";
-				for (Copy c : Database::getCopies()) //Find all IDs of that Book
-					if (c.getBook()->getTitle() == t) {
-						temp.ids += to_string(c.getID()) + " "; //update totalBookInfo to sort by popularity
-						temp.numReserves += c.getReservers().size();
-					}
+				for (Copy* c : getAllCopiesByTitle(b.getTitle()))//Find all IDs of that Book
+					temp.ids += to_string(c->getID()) + " "; //update totalBookInfo to sort by popularity
+				temp.numReserves = getBookPopularity(b.getISBN());
 				popularity.push_back(temp); //Add to list of books to sort based on popularity
 			}
 		if (found) {
@@ -219,6 +220,154 @@ void Database::changePassword(istream& in, User& u) {
 
 
 
+//============ TRAVERSAL FUNCTIONS ============// 
+// Anything that returns an index, returns -1 if nothing was found
+
+//Returns a vector of all IDs in the database sorted least to greatest
+vector<int> Database::getAllIDs() {
+	vector<int> ids;
+	for (Copy c : copies) //load in all IDs
+		ids.push_back(c.getID());
+	//selection sort to sort IDs
+	for (int x = 0; x < ids.size() - 1; x++) {
+		int index = x;
+		for (int y = x + 1; y < ids.size(); y++)
+			if (ids[y] < ids[index]) //least to greatest
+				index = y;
+		swap(ids[x], ids[index]);
+	}
+	return ids;
+}
+
+//Returns vector of pointers to copies in database based on ISBN
+vector<Copy*> Database::getAllCopiesByISBN(string ISBN) {
+	vector<Copy*> list;
+	for (int i = 0; i < copies.size(); i++) //find all copies of a book
+		if (copies[i].getBook()->getISBN() == ISBN)
+			list.push_back(&copies[i]);
+	return list;
+}
+
+//Returns vector of pointers to copies in database based on title
+vector<Copy*> Database::getAllCopiesByTitle(string title) {
+	vector<Copy*> list;
+	for (int i = 0; i < copies.size(); i++) //find all copies of a book
+		if (toLower(copies[i].getBook()->getTitle()) == toLower(title)) //lowercase for better results
+			list.push_back(&copies[i]);
+	return list;
+}
+
+//Returns a vector of pointers to top rated books
+vector<Book*> Database::getTopRated() {
+	//id parameter: range of 0-3;
+	vector<Book*> list;
+	for (int i = 0; i < books.size(); i++)
+		list.push_back(&books[i]);
+	//selection sort, greatest to least
+	for (int i = 0; i < list.size() - 1; i++) { 
+		int index = i;
+		for (int z = i + 1; z < list.size(); z++)
+			if (list[z]->getFavor() > list[index]->getFavor())
+				index = z;
+		swap(list[index], list[i]);
+	}
+	return list;
+}
+
+//Returns the index of the copy in the database given an ID
+int Database::getCopyByID(int id) {
+	for (int i = 0; i < copies.size(); i++)
+		if (copies[i].getID() == id)
+			return i;
+	return -1;
+}
+
+//Returns the index of the book in the database given an ISBN
+int Database::getBookByISBN(string ISBN) {
+	for (int i = 0; i < books.size(); i++)
+		if (books[i].getISBN() == ISBN)
+			return i;
+	return -1;
+}
+
+//Returns index of the reader in the database given a username
+int Database::getReaderByUsername(string username) {
+	for (int i = 0; i < readers.size(); i++)
+		if (toLower(readers[i].getUsername()) == toLower(username))
+			return i;
+	return -1;
+}
+
+//Returns index of the librarian in the database given a username
+int Database::getAdminByUsername(string username) {
+	for (int i = 0; i < admins.size(); i++)
+		if (toLower(admins[i].getUsername()) == toLower(username))
+			return i;
+	return -1;
+}
+
+//Returns the index of the user in the reserve list of a copy given a username and copy
+int Database::getUserInReservers(Copy& c, string username) {
+	for (int i = 0; i < c.getReservers().size(); i++)
+		if (toLower(c.getReservers()[i]) == toLower(username))
+			return i;
+	return -1;
+}
+
+//Returns the index of the ID in the borrowed list of a user given an ID
+int Database::getCopyInBorrowedList(Reader& r, int id) {
+	for (int i = 0; i < r.getBorrowedBookList().size(); i++)
+		if (r.getBorrowedBookList()[i]->getID() == id)
+			return i;
+	return -1;
+}
+
+//Returns the index of the ID in the reserve list of a user given an ID
+int Database::getCopyInReserveList(Reader& r, int id) {
+	for (int i = 0; i < r.getReserved().size(); i++)
+		if (r.getReserved()[i]->getID()==id)
+			return i;
+	return -1;
+}
+
+//Deletes reserver from both the queue of dates/usernames of the copy and the user's reserved vector
+void Database::deleteReserver(Reader& r, Copy& c, int pos) {
+	c.getReservers().erase(c.getReservers().begin() + pos);
+	c.getReserveDates().erase(c.getReserveDates().begin() + pos);
+	r.getReserved().erase(r.getReserved().begin() + getCopyInReserveList(r, c.getID()));
+}
+
+//Returns the total number of reserves on all copies of a book
+int Database::getBookPopularity(string ISBN) {
+	int pop = 0;
+	for (Copy* c : getAllCopiesByISBN(ISBN))
+		pop += c->getReservers().size();
+	return pop;
+}
+
+
+
+//============ UTILITY FUNCTIONS ============//
+
+//Selection sort based on popularity
+void Database::sort(vector<totalBookInfo>& v) {
+	for (int i = 0; i < v.size() - 1; i++) {
+		int index = i;
+		for (int k = i + 1; k < v.size(); k++)
+			if (v[k].numReserves > v[index].numReserves)
+				index = k;
+		swap(v[i], v[index]);
+	}
+}
+
+//Converts strings to lowercase as well as returns the original string so that string class functions can still be used
+string Database::toLower(string s) {
+	string temp = "";
+	for (char c : s)
+		temp += tolower(c);
+	return temp;
+}
+
 //splits a string delimited by spaces and returns a vector<string> with data given from said string
 vector<string> Database::split(string s) {
 	vector<string> v;
@@ -234,71 +383,4 @@ vector<string> Database::split(string s) {
 		else
 			temp += c;
 	return v;
-}
-
-//Returns a vector of all IDs in the database sorted least to greatest
-vector<int> Database::getAllCopyIDs() {
-	vector<int> ids;
-	for (Copy c : copies) //load in all IDs
-		ids.push_back(c.getID());
-	//selection sort to sort IDs
-	for (int x = 0; x < ids.size() - 1; x++) {
-		int index = x;
-		for (int y = x + 1; y < ids.size(); y++)
-			if (ids[y] < ids[index]) //least to greatest
-				index = y;
-		swap(ids[x], ids[index]);
-	}
-	return ids;
-}
-
-//Returns the index of the book in the database given an ISBN
-int Database::getBookByISBN(string ISBN) {
-	for (int i = 0; i < books.size(); i++)
-		if (books.at(i).getISBN() == ISBN)
-			return i;
-	return -1;
-}
-
-//Returns the index of the copy in the database given an ID
-int Database::getCopyByID(int id) {
-	for (int i = 0; i < copies.size(); i++)
-		if (copies.at(i).getID() == id)
-			return 1;
-	return -1;
-}
-
-//Returns index of the reader in the database given a username
-int Database::getReaderByUsername(string username) {
-	for (int i = 0; i < readers.size(); i++)
-		if (readers[i].getUsername() == username)
-			return i;
-	return -1;
-}
-
-//Returns index of the librarian in the database given a username
-int Database::getAdminByUsername(string username) {
-	for (int i = 0; i < admins.size(); i++)
-		if (readers[i].getUsername() == username)
-			return i;
-	return -1;
-}
-
-//Converts strings to lowercase as well as returns the original string so that string class functions can still be used
-string Database::toLower(string s) {
-	string temp = "";
-	for (char c : s)
-		temp += tolower(c);
-	return temp;
-}
-
-//Selection sort based on popularity
-void Database::sort(vector<totalBookInfo>& v) {
-	for (int i = 0; i < v.size() - 1; i++) {
-		int index = i;
-		for (int k = i + 1; k < v.size(); k++)
-			if (v[k].numReserves > v[index].numReserves)
-				index = k;
-		swap(v[i], v[index]);
-	}
 }
