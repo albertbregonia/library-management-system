@@ -110,7 +110,7 @@ void Database::save() {
 
 //============ USERS FUNCTIONS ============// 
 
-//Option 1 ***** cleanup
+//Option 1 
 void Database::searchBooks(istream& in) {
 	//User Input To Search By Selected Key
 	int choice;
@@ -254,46 +254,34 @@ vector<int> Database::getAllCopyIDs() {
 
 //Returns the index of the book in the database given an ISBN
 int Database::getBookByISBN(string ISBN) {
-	int index = -1;
 	for (int i = 0; i < books.size(); i++)
-		if (books.at(i).getISBN() == ISBN) {
-			index = i;
-			break;
-		}
-	return index;
+		if (books.at(i).getISBN() == ISBN)
+			return i;
+	return -1;
 }
 
 //Returns the index of the copy in the database given an ID
 int Database::getCopyByID(int id) {
-	int index = -1;
 	for (int i = 0; i < copies.size(); i++)
-		if (copies.at(i).getID() == id) {
-			index = i;
-			break;
-		}
-	return index;
+		if (copies.at(i).getID() == id)
+			return 1;
+	return -1;
 }
 
 //Returns index of the reader in the database given a username
 int Database::getReaderByUsername(string username) {
-	int index = -1;
 	for (int i = 0; i < readers.size(); i++)
-		if (readers[i].getUsername() == username) {
-			index = i;
-			break;
-		}
-	return index;
+		if (readers[i].getUsername() == username)
+			return i;
+	return -1;
 }
 
 //Returns index of the librarian in the database given a username
 int Database::getAdminByUsername(string username) {
-	int index = -1;
 	for (int i = 0; i < admins.size(); i++)
-		if (readers[i].getUsername() == username) {
-			index = i;
-			break;
-		}
-	return index;
+		if (readers[i].getUsername() == username)
+			return i;
+	return -1;
 }
 
 //Converts strings to lowercase as well as returns the original string so that string class functions can still be used
