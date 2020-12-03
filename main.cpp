@@ -126,6 +126,10 @@ void gui(bool type) {
 				Database::changePassword(cin, Database::getAdmins().at(current));
 			Database::save();
 			break;
+		case 9: //Recommend Books
+			if (type)
+				Database::getReaders().at(current).recommendBooks();
+			break;
 		default: //Invalid Input
 			cout << "Invalid selection. Please enter a valid ID." << endl;
 		}

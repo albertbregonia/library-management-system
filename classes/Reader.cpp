@@ -317,3 +317,21 @@ void Reader::renewBooks(istream& in) {
 	}
 	Database::save();
 }
+
+//Option 9 - Recommend Books
+void Reader::recommendBooks() {
+	vector<Database::totalBookInfo> list;
+	for (Book b : Database::getBooks()) //while the list is <10 and if the borrowed books is not empty and the category matches OR if the list is empty
+		if (((!borrowed.empty() && b.getCategory() == borrowed[borrowed.size() - 1]->getBook()->getCategory()) || borrowed.empty()) && list.size() < 10) { //last book's category
+			Database::totalBookInfo temp; //Save Book, IDs and Reserve Count for each copy
+			temp.book = b;
+			temp.ids = "***IDs: ";
+			for (Copy* c : Database::getAllCopiesByTitle(b.getTitle()))//Find all IDs of that Book
+				temp.ids += to_string(c->getID()) + " "; //update totalBookInfo to sort by popularity
+			temp.numReserves = Database::getBookPopularity(b.getISBN());
+			list.push_back(temp); //Add to list of books to sort based on popularity
+		}
+	Database::sort(list); //selection sort based on number of reserves
+	for (Database::totalBookInfo i : list) //Print books
+		cout << i.book << i.ids << endl << endl;
+}

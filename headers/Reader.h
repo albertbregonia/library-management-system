@@ -45,5 +45,6 @@ public:
 	void reserveBooks(istream& in);
 	void cancelReserve(istream& in);
 	void renewBooks(istream& in);
+	void recommendBooks();
 };
 

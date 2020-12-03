@@ -16,12 +16,12 @@ private:
 	static vector<Librarian> admins; //Administrative Accounts
 	static vector<Book> books; //Types of Books
 	static vector<Copy> copies; //Virtual Books
+public:
 	struct totalBookInfo { //Defined to Sort Books based on popularity
 		Book book = Book();
 		string ids = "";
 		int numReserves = 0;
 	};
-public:
 	//Accessors
 	static int getPartitioner();
 	static void setPartitioner(int i);
