@@ -344,9 +344,11 @@ int Database::getCopyInReserveList(Reader& r, int id) {
 
 //Deletes reserver from both the queue of dates/usernames of the copy and the user's reserved vector
 void Database::deleteReserver(Reader& r, Copy& c, int pos) {
-	c.getReservers().erase(c.getReservers().begin() + pos);
-	c.getReserveDates().erase(c.getReserveDates().begin() + pos);
-	r.getReserved().erase(r.getReserved().begin() + getCopyInReserveList(r, c.getID()));
+	if (pos >= 0 && pos < c.getReservers().size() && getCopyInReserveList(r, c.getID()) >= 0) {
+		c.getReservers().erase(c.getReservers().begin() + pos);
+		c.getReserveDates().erase(c.getReserveDates().begin() + pos);
+		r.getReserved().erase(r.getReserved().begin() + getCopyInReserveList(r, c.getID()));
+	}
 }
 
 //Returns the total number of reserves on all copies of a book

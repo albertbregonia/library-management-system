@@ -39,12 +39,13 @@ void Librarian::addBook(istream& in) {
 		Database::getBooks()[i].setCount(Database::getBooks()[i].getCount() + 1); //increase copy count
 		c.setBook(&Database::getBooks()[i]);  //set the reference book of the copy to the one in the database already
 		Database::getCopies().push_back(c);
-		cout << endl << endl << "Successfully created a new copy with ID #" << i << " as the book with ISBN: " << b.getISBN() << " was already found in the database." << endl << endl;
+		cout << endl << endl << "Successfully created a new copy with ID #" << c.getID() << " as the book with ISBN: " << b.getISBN() << " was already found in the database." << endl << endl;
 	}
 	else { //If no pre-existing book was found:
 		Database::getBooks().push_back(b); //add new book to database
 		c.setBook(&Database::getBooks()[Database::getBooks().size() - 1]); //set book pointer to newly added book
 		Database::getCopies().push_back(c);
+		cout << endl << endl << "Successfully created a new copy with ID #" << c.getID() << " and a new book with ISBN: " << b.getISBN() << " as it was not found in the database." << endl << endl;
 	}
 	Database::save(); //save back to text files
 }
@@ -62,7 +63,7 @@ void Librarian::deleteBook(istream& in) {
 				if ((pos = Database::getCopyInReserveList(Database::getReaders()[i], id)) >= 0)
 					Database::deleteReserver(Database::getReaders()[i], *desired, pos);
 
-			if (!Database::getAllCopiesByISBN(desired->getBook()->getISBN()).size()==1)//if this is the last copy, delete the book as well
+			if (Database::getAllCopiesByISBN(desired->getBook()->getISBN()).size()==1)//if this is the last copy, delete the book as well
 				Database::getBooks().erase(Database::getBooks().begin() + Database::getBookByISBN(desired->getBook()->getISBN()));
 			Database::getCopies().erase(Database::getCopies().begin() + copy); //delete the copy
 			cout << endl << "Successfully deleted Book with ID #" << id << endl;
@@ -106,6 +107,7 @@ void Librarian::addUser(istream& in) {
 			cout << Database::getReaders()[oldPart + 1];
 		else //Print New Teacher
 			cout << Database::getReaders()[Database::getReaders().size() - 1];
+		Database::save();
 	}
 	else
 		cout << "Failed to create new user. Username is already in use." << endl;
@@ -128,12 +130,14 @@ void Librarian::deleteUser(istream& in) {
 					if ((pos = Database::getUserInReservers(Database::getCopies()[x], user)) >= 0)
 						Database::deleteReserver(Database::getReaders()[i], Database::getCopies()[x], pos);
 				cout << "Successfully erased - Username: " << user << endl;
+				Database::save();
 			}
 			else
 				cout << "Unfortunately, this user has borrowed books and cannot be deleted at the moment." << endl;
 		else if ((i = Database::getAdminByUsername(user)) >= 0) {
 			Database::getAdmins().erase(Database::getAdmins().begin() + i);
 			cout << "Successfully erased - Username: " << user << endl;
+			Database::save();
 		}
 		else
 			cout << endl << endl << "Could not find a user with the username: " << user << endl;
