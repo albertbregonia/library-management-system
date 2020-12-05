@@ -18,7 +18,7 @@ private:
 	static vector<Copy> copies; //Virtual Books
 public:
 	struct totalBookInfo { //Defined to Sort Books based on popularity
-		Book book = Book();
+		Book* book;
 		string ids = "";
 		int numReserves = 0;
 	};

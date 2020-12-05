@@ -187,23 +187,23 @@ void Database::searchBooks(istream& in) {
 		break;
 	case 2: //Author Based Search
 	case 3: //Category Based Search - As choices 2 and 3 carry out the same algorithm an if statement is used to simplify code
-		for (Book b : books)
-			if ((choice == 2 && toLower(b.getAuthor()).find(key) != string::npos) || //Find book with author or string in author if 2
-				(choice == 3 && toLower(b.getCategory()).find(key) != string::npos)) { //Find book with category or string in category if 3
+		for (int z=0; z<books.size(); z++)
+			if ((choice == 2 && toLower(books[z].getAuthor()).find(key) != string::npos) || //Find book with author or string in author if 2
+				(choice == 3 && toLower(books[z].getCategory()).find(key) != string::npos)) { //Find book with category or string in category if 3
 				if (!found) //At least 1 result
 					found = true;
 				totalBookInfo temp; //Save Book, IDs and Reserve Count for each copy
-				temp.book = b;
+				temp.book = &books[z];
 				temp.ids = "***IDs: ";
-				for (Copy* c : getAllCopiesByTitle(b.getTitle()))//Find all IDs of that Book
+				for (Copy* c : getAllCopiesByTitle(books[z].getTitle()))//Find all IDs of that Book
 					temp.ids += to_string(c->getID()) + " "; //update totalBookInfo to sort by popularity
-				temp.numReserves = getBookPopularity(b.getISBN());
+				temp.numReserves = getBookPopularity(books[z].getISBN());
 				popularity.push_back(temp); //Add to list of books to sort based on popularity
 			}
 		if (found) {
 			sort(popularity); //selection sort based on number of reserves
 			for (totalBookInfo i : popularity) //Print books
-				cout << i.book << i.ids << endl << endl;
+				cout << *i.book << i.ids << endl << endl;
 		}
 		else
 			cout << "No Results." << endl;
