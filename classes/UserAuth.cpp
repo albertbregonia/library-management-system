@@ -53,6 +53,7 @@ int UserAuthentication::login(istream &in, bool& type) {
 	string user, pw;
 	cout << "Please enter your username: ";
 	in >> user;
+	user = Database::toLower(user);
 	cout << "Please enter your password: ";
 	char c;
 	int ctr = 0; //pos for backspace in password mask
@@ -68,15 +69,10 @@ int UserAuthentication::login(istream &in, bool& type) {
 			ctr--;
 		}
 	}
-	if (type) {
-		for (int i = 0; i < Database::getReaders().size(); i++)
-			if (Database::getReaders().at(i).getUsername() == user && Database::getReaders().at(i).getPassword() == pw)
-				return i; //returns the index of the student in the database
-	}
+	if (type)
+		return Database::getReaderByUsername(user);
 	else
-		for (int i = 0; i < Database::getAdmins().size(); i++)
-			if (Database::getAdmins().at(i).getUsername() == user && Database::getAdmins().at(i).getPassword() == pw)
-				return i; //returns the index of the student in the database
+		return Database::getAdminByUsername(user);
 	return -1; //returns -1 upon failure to find a student of those credentials
 }
 
