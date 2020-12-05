@@ -53,12 +53,12 @@ void startup() {
 
 //Welcome and Login Menu
 void start() {
-	bool type; // true for student/teacher - false for admin
 	Display::welcome();
-	cin >> type;
-	if (type > 1 || type < 0) //Default choice is student
-		type = 1;
+	int choice = Database::inputHandler(cin); //take in input
+	bool type = choice != 0; // true for student/teacher - false for admin
+	string info = (type) ? "Student/Teacher" : "Administrator";
 	Display::clrscr();
+	cout << "You are a [" << info << "]" << endl;
 	while ((current = UserAuthentication::login(cin,type)) < 0) { //Attempt Login, Repeats until login is successful, result is stored in 'current'
 		cout << endl;
 		Display::border();

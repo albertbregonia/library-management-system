@@ -127,7 +127,19 @@ void Database::searchBooks(istream& in) {
 		cout << "\t " << i << " - " << keys[i] << endl;
 	cout << "\t -1 - Cancel" << endl;
 	cout << endl << "Selection: ";
-	in >> choice;
+	bool error;
+	do { //Handle invalid inputs
+		string input;
+		getline(in >> ws, input);
+		try {
+			choice = stoi(input);
+			error = false;
+		}
+		catch (...) {
+			error = true;
+			cout << "Invalid Input. Please try again." << endl << endl;
+		}
+	} while (error);
 	cout << endl;
 	Display::border();
 
@@ -348,6 +360,24 @@ int Database::getBookPopularity(string ISBN) {
 
 
 //============ UTILITY FUNCTIONS ============//
+
+int Database::inputHandler(istream& in) {
+	bool error;
+	int num;
+	do { //Handle invalid inputs when inputting an integer and a string is given
+		string input;
+		getline(in>>ws, input);
+		try {
+			num = stoi(input);
+			error = false;
+		}
+		catch (...) {
+			error = true;
+			cout << "Invalid Input. Please try again. \n\nSelection: ";
+		}
+	} while (error);
+	return num;
+}
 
 //Selection sort based on popularity
 void Database::sort(vector<totalBookInfo>& v) {

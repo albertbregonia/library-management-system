@@ -156,9 +156,8 @@ bool Reader::isOverdue(Copy* c) {
 void Reader::borrowBooks(istream& in) {
 	if (!anyOverdue()) //Check for overdue
 		if (getMaxCopies() > getBorrowedBookList().size()) { //Check if they haven't checked out more than their maximum
-			int id;
 			cout << "ID of desired book: "; //Input for desired book ID
-			in >> id;
+			int id = Database::inputHandler(in);
 			if (Database::getCopyByID(id) >= 0) { //Check for invalid ID
 				Copy* desired = &Database::getCopies().at(Database::getCopyByID(id)); //A pointer is used here to modify the value directly in the database instead of a copy of the value
 				int res = Database::getBookPopularity(desired->getBook()->getISBN()); //total number of reservations
@@ -212,9 +211,8 @@ void Reader::borrowBooks(istream& in) {
 
 //Option 3 - Return Books
 void Reader::returnBooks(istream& in) {
-	int id;
 	cout << "ID of book to return: "; //Input for desired book ID
-	in >> id;
+	int id = Database::inputHandler(in);
 	if (Database::getCopyByID(id) >= 0) { //Check for invalid ID
 		Copy* desired = &Database::getCopies()[Database::getCopyByID(id)]; //A pointer is used here to modify the value directly in the database instead of a copy of the value
 		int pos = Database::getCopyInBorrowedList(*this, id);
@@ -244,8 +242,7 @@ void Reader::reserveBooks(istream& in) {
 	//Make Reservations
 	if (!anyOverdue()) {
 		cout << "Enter the ID of the book you would like to reserve: ";
-		int id;
-		in >> id;
+		int id = Database::inputHandler(in);
 		if (Database::getCopyByID(id) >= 0) { //Check if the copy exists in the database
 			Copy* desired = &Database::getCopies()[Database::getCopyByID(id)];
 			if (Database::getCopyInBorrowedList(*this, id) < 0) //reader has not borrowed this book
@@ -277,8 +274,7 @@ void Reader::reserveBooks(istream& in) {
 //Option 5 - Cancel Reservations
 void Reader::cancelReserve(istream& in) {
 	cout << "Enter the ID of the book that has the reservation you wish to cancel: ";
-	int id;
-	in >> id;
+	int id = Database::inputHandler(in);
 	if (Database::getCopyByID(id) >= 0) {
 		Copy* desired = &Database::getCopies()[Database::getCopyByID(id)];
 		int pos = Database::getUserInReservers(*desired, getUsername());
@@ -299,8 +295,7 @@ void Reader::cancelReserve(istream& in) {
 void Reader::renewBooks(istream& in) {
 	if (!anyOverdue()) {
 		cout << "Enter the ID of the book you wish to renew: ";
-		int id;
-		in >> id;
+		int id = Database::inputHandler(in);
 		int pos = Database::getCopyByID(id);
 		if (pos >= 0) //If the ID is valid, the reservation list is empty and the current reader is the borrower
 			if (Database::getCopies()[pos].getReservers().empty() && Database::getCopies()[pos].getBorrower() == getUsername()) {

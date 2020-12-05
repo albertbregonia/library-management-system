@@ -34,6 +34,7 @@ public:
 	static vector<string> split(string s);
 	static string toLower(string s);
 	static void sort(vector<totalBookInfo>& v);
+	static int inputHandler(istream& in);
 
 	//Traverse Database
 	static vector<int> getAllIDs();

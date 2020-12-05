@@ -12,7 +12,7 @@ Librarian::Librarian(string username, string password) : User(username, password
 //Option 2
 void Librarian::addBook(istream& in) {
 	Book b;
-	bool error = false;
+	bool error;
 	do{ //Do-while to keep taking in an input until no errors occur
 		cout << "Please enter in the Book Information." << endl;
 		cout << "Please enter in the order of [ISBN - Title - Author - Catgeory - Index -  1 - 0 - End]:" << endl;
@@ -52,8 +52,7 @@ void Librarian::addBook(istream& in) {
 //Option 3
 void Librarian::deleteBook(istream& in) {
 	cout << "Enter the ID of the book you wish to delete: ";
-	int id;
-	in >> id;
+	int id = Database::inputHandler(in);
 	int copy;
 	if ((copy = Database::getCopyByID(id)) >= 0) //Check for valid book
 		if (Database::getCopies()[copy].getBorrower() == "none") { //Can only delete if the copy is not lent out
