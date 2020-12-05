@@ -1,6 +1,7 @@
 #include "Librarian.h"
 #include "Database.h"
 #include "UserAuth.h"
+#include "Display.h"
 #include <iostream>
 
 //Constructor
@@ -10,13 +11,24 @@ Librarian::Librarian(string username, string password) : User(username, password
 
 //Option 2
 void Librarian::addBook(istream& in) {
-	cout << "Please enter in the Book Information." << endl;
-	cout << "Please enter in the order of [ISBN - Title - Author - Catgeory - Index -  1 - 0 - End]:" << endl;
-	cout << "'1' and '0' are the default 'Count' and 'Favor' attributes. \nIf this book already exists in the database it will adjusted accordingly." << endl;
-	cout << "If this is a new book that has not been in the database, these are the default parameters." << endl << endl;
-	cout << "Book Information:" << endl;
 	Book b;
-	in >> b;
+	bool error = false;
+	do{ //Do-while to keep taking in an input until no errors occur
+		cout << "Please enter in the Book Information." << endl;
+		cout << "Please enter in the order of [ISBN - Title - Author - Catgeory - Index -  1 - 0 - End]:" << endl;
+		cout << "'1' and '0' are the default 'Count' and 'Favor' attributes. \nIf this book already exists in the database it will adjusted accordingly." << endl;
+		cout << "If this is a new book that has not been in the database, these are the default parameters." << endl << endl;
+		cout << "Book Information:" << endl;
+		try { 
+			in >> b;
+			error = false;
+		}
+		catch (...) {
+			cerr << endl << endl << endl << "Invalid Input. Please try again" << endl << endl << endl;
+			Display::border();
+			error = true;
+		}
+	} while (error);
 	Copy c; //create a New Copy of the book
 	int i = 0;
 	while (Database::getAllIDs()[i] == i) i++;
@@ -43,7 +55,7 @@ void Librarian::deleteBook(istream& in) {
 	int id;
 	in >> id;
 	int copy;
-	if ((copy = Database::getCopyByID(id)) >= 0) { //Check for valid book
+	if ((copy = Database::getCopyByID(id)) >= 0) //Check for valid book
 		if (Database::getCopies()[copy].getBorrower() == "none") { //Can only delete if the copy is not lent out
 			int pos;
 			Copy* desired = &Database::getCopies()[copy];
@@ -59,7 +71,6 @@ void Librarian::deleteBook(istream& in) {
 		}
 		else
 			cout << "Unable to delete book. This copy has already been lent out to a reader." << endl;
-	}	
 	else
 		cout << endl << "Book with ID #" << id << " was not found." << endl;
 }
