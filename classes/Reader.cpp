@@ -119,8 +119,6 @@ istream& operator>>(istream& in, Reader& r) {
 	return in;
 }
 
-bool Reader::operator==(Reader& r) { return getUsername() == r.getUsername() && getPassword() == r.getPassword(); }
-
 //Checks for overdue books and remove overdue reservations <no penalty is issued>
 bool Reader::anyOverdue() {
 	for (int i = 0; i < Database::getCopies().size(); i++)

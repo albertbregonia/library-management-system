@@ -54,3 +54,5 @@ istream& operator>>(istream& in, User& u) {
 		}
 	return in;
 }
+
+bool User::operator==(User& u) { return username == u.getUsername() && password == u.getPassword(); }

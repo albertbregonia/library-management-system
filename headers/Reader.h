@@ -33,7 +33,6 @@ public:
 	//Overloaded Operators
 	friend ostream& operator<<(ostream& out, Reader& r);
 	friend istream& operator>>(istream& in, Reader& r);
-	bool operator==(Reader& r);
 
 	//Readers may have penalties
 	bool isOverdue(Copy* c);

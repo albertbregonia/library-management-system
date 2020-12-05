@@ -20,5 +20,6 @@ public:
 
 	friend ostream& operator<<(ostream& out, User& u);
 	friend istream& operator>>(istream& in, User& u);
+	bool operator==(User& u);
 };
 
