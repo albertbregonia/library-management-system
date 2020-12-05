@@ -46,4 +46,5 @@ C++ Library Management System for ESE224
    - Number of Penalties
    - List of Reserved Books - Stored by Copy ID; *-1 if empty*
 - `teacher.txt` - Contains the different teacher acocunts. Stored in the same format as the students.
+
 Upon utilizing the `Database::save()` function, all data present in the database vectors are written out to these text files in this format.
