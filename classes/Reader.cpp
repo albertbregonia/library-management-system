@@ -182,9 +182,9 @@ void Reader::borrowBooks(istream& in) {
 						return;
 					}
 				} //If they have a reservation on one book but another copy with a different ID is available, they can borrow it
-				else if (!desired->getReservers().empty() && desired->getReservers()[0] == getUsername())  
+				else
 					for (Copy* c:Database::getAllCopiesByISBN(desired->getBook()->getISBN()))
-						if (c->getBorrower() == "none"){
+						if (c->getBorrower() == "none" && c->getReservers().empty()){ //Book has no reservors and no borrower
 							//Book Modifications
 							c->setBorrower(getUsername());
 							c->setStartDate(Date::getDays()); //set start period to current date
