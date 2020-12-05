@@ -31,7 +31,7 @@ void startup();
 void start();
 
 //UI
-void gui(bool type);
+void gui(bool& type);
 int current = -1; //Index of current student in the database, if successful this value is > 0
 
 //Runner
@@ -68,7 +68,7 @@ void start() {
 	gui(type); //Load successful login menu
 }
 
-void gui(bool type) {
+void gui(bool& type) {
 	Display::clrscr();
 	Display::border();
 	cout << "You have successfully logged into the Library Management System." << endl;
