@@ -29,9 +29,9 @@ void Librarian::addBook(istream& in) {
 			error = true;
 		}
 	} while (error);
-	Copy c; //create a New Copy of the book
+	Copy c;
 	int i = 0;
-	while (Database::getAllIDs()[i] == i) i++;
+	while (i < Database::getAllIDs().size() && Database::getAllIDs()[i] == i) i++;
 	c.setID(i); //find and set the first possible unique ID
 
 	//Find the book in the database if it already exists
@@ -42,9 +42,23 @@ void Librarian::addBook(istream& in) {
 		cout << endl << endl << "Successfully created a new copy with ID #" << c.getID() << " as the book with ISBN: " << b.getISBN() << " was already found in the database." << endl << endl;
 	}
 	else { //If no pre-existing book was found:
+
+		//As a vector resizes itself Sections A and B were implemented to retain pointer values - Albert Bregonia
+
+		//Section A
+		vector<Book> former; 
+		for (Copy c : Database::getCopies())
+			former.push_back(*c.getBook());
+		//End of Section A
+
 		Database::getBooks().push_back(b); //add new book to database
 		c.setBook(&Database::getBooks()[Database::getBooks().size() - 1]); //set book pointer to newly added book
 		Database::getCopies().push_back(c);
+
+		//Section B
+		for (int k = 0; k < former.size(); k++)
+			Database::getCopies()[k].setBook(&Database::getBooks()[Database::getBookByISBN(former[k].getISBN())]);
+		//End of Section B
 		cout << endl << endl << "Successfully created a new copy with ID #" << c.getID() << " and a new book with ISBN: " << b.getISBN() << " as it was not found in the database." << endl << endl;
 	}
 	Database::save(); //save back to text files
@@ -65,7 +79,20 @@ void Librarian::deleteBook(istream& in) {
 
 			if (Database::getAllCopiesByISBN(desired->getBook()->getISBN()).size()==1)//if this is the last copy, delete the book as well
 				Database::getBooks().erase(Database::getBooks().begin() + Database::getBookByISBN(desired->getBook()->getISBN()));
+
+			//As a vector resizes itself Sections A and B were implemented to retain pointer values - Albert Bregonia
+
+			//Section A
+			vector<Book> former;
+			for (Copy c : Database::getCopies())
+				former.push_back(*c.getBook());
+			//End of Section A
 			Database::getCopies().erase(Database::getCopies().begin() + copy); //delete the copy
+
+			//Section B
+			for (int k = 0; k < former.size()-1; k++)
+				Database::getCopies()[k].setBook(&Database::getBooks()[Database::getBookByISBN(former[k].getISBN())]);
+			//End of Section B
 			cout << endl << "Successfully deleted Book with ID #" << id << endl;
 			Database::save();
 		}

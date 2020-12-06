@@ -143,7 +143,7 @@ bool Reader::anyOverdue() {
 bool Reader::isOverdue(Copy* c) {
 	if (Date::getDays() > c->getExpirationDate()) {
 		penalties++; //increase penalty if overdue
-		if (penalties == 6 || penalties % 5 == 0) //penalties>5 and if penalties is a multiple of 5 decrease max #
+		if (penalties == 6 || (penalties % 5 == 0 && penalties>5)) //penalties>5 and if penalties is a multiple of 5 decrease max #
 			max--;
 		return true;
 	}
@@ -193,7 +193,6 @@ void Reader::borrowBooks(istream& in) {
 							getBorrowedBookList().push_back(c); //add to borrowed book list
 							cout << endl << "As ID #" << id << " was not available, You have successfully borrowed an equivalent copy. ID #" << c << endl << endl;
 							Database::deleteReserver(*this, *desired, 0); //delete
-							reserved.erase(reserved.begin() + Database::getCopyInReserveList(*this, id));
 							cout << c; //Print recently borrowed book info
 							Database::save(); //write back to database files
 							return;
