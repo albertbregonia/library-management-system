@@ -1,5 +1,5 @@
 # ESE224 Library Management System
-C++ Library Management System for ESE224
+C++ Library Management System - ESE224 Fall 2020 Course Project
 
 ## Members:
  - Albert Bregonia
