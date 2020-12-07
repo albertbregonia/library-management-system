@@ -46,9 +46,9 @@ void Librarian::addBook(istream& in) {
 		//As a vector resizes itself Sections A and B were implemented to retain pointer values - Albert Bregonia
 
 		//Section A
-		vector<Book> former; 
+		vector<string> former; 
 		for (Copy c : Database::getCopies())
-			former.push_back(*c.getBook());
+			former.push_back(c.getBook()->getISBN());
 		//End of Section A
 
 		Database::getBooks().push_back(b); //add new book to database
@@ -57,7 +57,7 @@ void Librarian::addBook(istream& in) {
 
 		//Section B
 		for (int k = 0; k < former.size(); k++)
-			Database::getCopies()[k].setBook(&Database::getBooks()[Database::getBookByISBN(former[k].getISBN())]);
+			Database::getCopies()[k].setBook(&Database::getBooks()[Database::getBookByISBN(former[k])]);
 		//End of Section B
 		cout << endl << endl << "Successfully created a new copy with ID #" << c.getID() << " and a new book with ISBN: " << b.getISBN() << " as it was not found in the database." << endl << endl;
 	}
