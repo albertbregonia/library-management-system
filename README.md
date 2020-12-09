@@ -1,5 +1,10 @@
 # ESE224 Library Management System
 C++ Library Management System - ESE224 Fall 2020 Course Project
+<br><br>
+**Many of the features of this system and the way they were implemented were requirements decided by our instructors. For example, the 'availability' attribute of 'Copy' 
+ and the 'Count'/'Index' attribute of 'Book' were required as per stated in the document. Although this data is useless and merely takes up more RAM, it was NOT our decision to implement this.**
+ <br><br>
+ **However, the `Database` class was my full design**
 
 ## Members:
  - Albert Bregonia
@@ -14,6 +19,8 @@ C++ Library Management System - ESE224 Fall 2020 Course Project
  would merely reference object in the database, system updates occurs automatically for all users.
  
  Using this database class allows for a high grade of scalability as it elimates much of the need for excessive `for-loops` and searching. Thus, allowing code to become more concise and new features are easily implementable.
+ 
+ ### *This repository should serve as a time capsule of my skill in C++ as of 12/2020
  
  # Storage Format
  Upon initialization, the system loads into RAM the data saved in the following text files:
